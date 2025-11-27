@@ -1,0 +1,8 @@
+fastapi
+uvicorn
+python-jose
+psycopg2-binary
+pandas
+openai
+plotly
+jinja2

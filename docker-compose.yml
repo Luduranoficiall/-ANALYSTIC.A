@@ -1,0 +1,73 @@
+
+version: "3.9"
+services:
+  app:
+    build: .
+    container_name: analystic_a_app
+    restart: always
+    env_file:
+      - .env
+    depends_on:
+      - db
+    ports:
+      - "8080:8080"
+    networks:
+      - analystic_a_net
+
+  db:
+    image: postgres:13
+    container_name: analystic_a_db
+    restart: always
+    environment:
+      POSTGRES_USER: analystic_a
+      POSTGRES_PASSWORD: analystic_a_secret
+      POSTGRES_DB: analystic_a
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    networks:
+      - analystic_a_net
+
+  redis:
+    image: redis:alpine
+    container_name: analystic_a_redis
+    restart: always
+    ports:
+      - "6379:6379"
+    networks:
+      - analystic_a_net
+
+  nginx:
+    image: nginx:alpine
+    container_name: analystic_a_nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./certbot:/var/www/certbot
+      - ./certs:/etc/nginx/certs
+    depends_on:
+      - app
+    networks:
+      - analystic_a_net
+
+  certbot:
+    image: certbot/certbot
+    container_name: analystic_a_certbot
+    volumes:
+      - ./certbot:/var/www/certbot
+      - ./certs:/etc/nginx/certs
+    entrypoint: >
+      /bin/sh -c "sleep 6 &&
+      certbot certonly --webroot -w /var/www/certbot \
+      --email admin@analystic.a --agree-tos --no-eff-email \
+      -d analystic.a"
+
+volumes:
+  db_data:
+
+networks:
+  analystic_a_net:

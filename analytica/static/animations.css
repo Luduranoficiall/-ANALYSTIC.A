@@ -1,0 +1,26 @@
+/* Cards com efeito 3D */
+.card, .kpi-card {
+    transform-style: preserve-3d;
+    transition: transform .4s ease, box-shadow .4s ease;
+}
+
+.card:hover, .kpi-card:hover {
+    transform: translateY(-6px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.3);
+}
+
+/* Sidebar parallax */
+.sidebar {
+    background: var(--bg-alt);
+    backdrop-filter: blur(12px);
+}
+
+/* Fade */
+.fade-in {
+    animation: fade .6s ease;
+}
+
+@keyframes fade {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

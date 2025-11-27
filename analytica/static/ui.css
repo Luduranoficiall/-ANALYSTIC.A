@@ -1,0 +1,38 @@
+/* Transição suave para troca de tema */
+html, body, .sidebar, .main-content, .kpi-card, .card, input, textarea {
+    transition: background .4s ease, color .4s ease, border .4s ease, box-shadow .4s ease;
+}
+
+.fade-in {
+    animation: fadeIn .8s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.zoom:hover {
+    transform: scale(1.03);
+    transition: .3s;
+}
+
+.menu-item {
+    display: block;
+    padding: 15px 20px;
+    color: var(--text);
+    transition: .2s;
+}
+
+.menu-item:hover {
+    background: var(--border);
+    padding-left: 25px;
+}
+
+.chart-frame {
+    width: 100%;
+    height: 420px;
+    border: none;
+    border-radius: 15px;
+    background: var(--card-bg);
+}

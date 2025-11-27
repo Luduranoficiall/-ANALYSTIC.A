@@ -1,0 +1,36 @@
+name: ANALYSTIC.A CI/CD
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+
+      - uses: actions/checkout@v3
+
+      - name: Docker Login
+        run: echo ${{ secrets.DOCKER_PASS }} | docker login -u ${{ secrets.DOCKER_USER }} --password-stdin
+
+      - name: Build Docker
+        run: docker build -t analystic-a/app:latest .
+
+      - name: Push to Docker Hub
+        run: docker push analystic-a/app:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set kubeconfig
+        run: |
+          echo "${{ secrets.KUBE_CONFIG }}" > kubeconfig
+          export KUBECONFIG=kubeconfig
+
+      - name: Apply to k8s
+        run: |
+          kubectl apply -f k8s-deployment.yml
+          kubectl rollout restart deployment analystic-a-app

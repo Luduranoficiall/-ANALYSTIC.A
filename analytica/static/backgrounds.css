@@ -1,0 +1,23 @@
+body {
+    background: var(--bg);
+}
+
+[data-theme="neon"] body {
+    background: radial-gradient(circle at top, #220044, #000010 60%);
+}
+
+[data-theme="extra"] body {
+    background: linear-gradient(135deg, #06101a, #03070c 60%);
+}
+
+[data-theme="matrix"] body {
+    background-image: url('/static/matrix.gif');
+    background-size: cover;
+    background-attachment: fixed;
+}
+
+[data-theme="night"] body {
+    background-image: url('/static/stars.gif');
+    background-size: cover;
+    background-attachment: fixed;
+}

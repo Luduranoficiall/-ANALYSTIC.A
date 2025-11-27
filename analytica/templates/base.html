@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }} — ANALYTIC.A ULTRA PREMIUM</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/ui.css">
+    <link rel="manifest" href="/static/manifest.json">
+    <script src="/static/app.js" defer></script>
+</head>
+<!DOCTYPE html>
+<html lang="pt-br" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ title }} — ANALYTIC.A ULTRA PREMIUM</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" href="/static/ui.css">
+
+    <!-- PWA -->
+    <link rel="manifest" href="/static/manifest.json">
+
+    <!-- JS -->
+    <script src="/static/app.js" defer></script>
+</head>
+
+<body class="theme-transition">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1>ANALYTIC.A <span>PRO</span></h1>
+            <p>ULTRA PREMIUM</p>
+        </div>
+
+        <nav class="menu">
+            <a href="/" class="menu-item">🏠 Dashboard</a>
+            <a href="/members" class="menu-item">👥 Membros</a>
+            <a href="/growth" class="menu-item">📈 Crescimento</a>
+            <a href="/cashback" class="menu-item">💸 Cashback</a>
+            <a href="/partners" class="menu-item">🤝 Parceiros</a>
+            <a href="/companies" class="menu-item">🏢 Empresas</a>
+            <a href="/network" class="menu-item">🌐 Rede 3 Níveis</a>
+            <a href="/revenue" class="menu-item">💼 Faturamento</a>
+            <a href="/predict" class="menu-item">🤖 PREDITIVI.A</a>
+            <a href="/upload" class="menu-item">⬆ Upload</a>
+        </nav>
+
+        <!-- BOTÃO DE TEMA -->
+        <div class="theme-switcher-container">
+            <button id="theme-toggle" class="btn-theme">
+                🌑 / 🌕
+            </button>
+        </div>
+    </aside>
+
+    <!-- CONTEÚDO -->
+    <main class="main-content fade-in">
+        {% block content %}{% endblock %}
+    </main>
+
+</body>
+</html>

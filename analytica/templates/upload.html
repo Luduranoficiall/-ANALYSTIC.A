@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload — ANALYTIC.A PRO</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="bg-dark">
+    <header class="topbar">
+        <h1>Upload de Dados</h1>
+        <p>Envie planilhas (.xlsx)</p>
+    </header>
+
+    <div class="upload-container">
+        <form action="/upload" method="POST" enctype="multipart/form-data">
+            <input type="file" name="file" accept=".xlsx" class="file-input">
+            <button class="btn-primary">Enviar</button>
+        </form>
+    </div>
+</body>
+</html>

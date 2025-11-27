@@ -1,0 +1,148 @@
+body { background: #181818; color: #fff; font-family: 'Segoe UI', Arial, sans-serif; }
+.container { max-width: 900px; margin: 40px auto; background: #232323; border-radius: 12px; padding: 32px; box-shadow: 0 2px 16px #0003; }
+h1, h2, h3 { color: #ffb300; }
+
+/* ==========================================
+   SISTEMA DE TEMAS (LIGHT / DARK / NEON / GOLD / EXTRAORDINARIA)
+   ========================================== */
+
+/* ========== TEMA LIGHT ========== */
+[data-theme="light"] {
+	--bg: #ffffff;
+	--bg-alt: #f2f4fa;
+	--text: #111;
+	--text-muted: #444;
+	--card-bg: #ffffff;
+	--border: #dce1ea;
+	--accent: #0055ff;
+	--accent-hover: #003bcc;
+	--glow: rgba(0, 85, 255, 0.4);
+}
+
+/* ========== TEMA DARK ========== */
+[data-theme="dark"] {
+	--bg: #05070d;
+	--bg-alt: #0a0f1a;
+	--text: #ffffff;
+	--text-muted: #b4bcd1;
+	--card-bg: #0e1526;
+	--border: #1a2438;
+	--accent: #00aaff;
+	--accent-hover: #0085cc;
+	--glow: rgba(0, 170, 255, 0.3);
+}
+
+/* ========== TEMA NEON (CYBERPUNK BLUE/PURPLE) ========== */
+[data-theme="neon"] {
+	--bg: #03000c;
+	--bg-alt: #0a0020;
+	--text: #e9e9ff;
+	--text-muted: #b8aaff;
+	--card-bg: #0d0033;
+	--border: #330066;
+	--accent: #6a00ff;
+	--accent-hover: #5000c9;
+	--glow: rgba(138, 43, 226, 0.7);
+}
+
+/* GLOW ESPECIAL */
+[data-theme="neon"] .card,
+[data-theme="neon"] .kpi-card {
+	box-shadow: 0 0 18px var(--glow);
+}
+
+/* ========== TEMA GOLD (VIP ANALYSTIC.A) ========== */
+[data-theme="gold"] {
+	--bg: #0c0b07;
+	--bg-alt: #14120b;
+	--text: #f6e8b1;
+	--text-muted: #b8a673;
+	--card-bg: #1a170e;
+	--border: #5a4e22;
+	--accent: #d4af37;
+	--accent-hover: #b8952b;
+	--glow: rgba(212, 175, 55, 0.5);
+}
+
+/* Borda e brilho do ouro */
+[data-theme="gold"] .card,
+[data-theme="gold"] .kpi-card {
+	border: 1px solid #c8a94c;
+	box-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
+}
+
+/* ========== TEMA EXTRAORDINÁRI.A BRAND (cores oficiais) ========== */
+[data-theme="extra"] {
+	--bg: #04070a;
+	--bg-alt: #071018;
+	--text: #ffffff;
+	--text-muted: #bbd4ff;
+	--card-bg: #0a1624;
+	--border: #10263d;
+	--accent: #00c2ff;
+	--accent-hover: #009ad3;
+	--glow: rgba(0, 194, 255, 0.35);
+}
+
+/* Glow ANALYSTIC.A */
+[data-theme="extra"] .card,
+[data-theme="extra"] .kpi-card {
+	box-shadow: 0 0 18px rgba(0, 194, 255, 0.25);
+}
+
+body.theme-transition {
+	background: var(--bg);
+	color: var(--text);
+	transition: background .5s, color .5s;
+}
+
+.sidebar {
+	background: var(--bg-alt);
+	border-right: 1px solid var(--border);
+	color: var(--text);
+}
+
+.sidebar-header span {
+	color: var(--accent);
+}
+
+.menu-item {
+	color: var(--text);
+}
+
+.menu-item:hover {
+	background: var(--border);
+}
+
+/* BOTÃO TEMA */
+.btn-theme {
+	padding: 10px 20px;
+	margin: 20px;
+	background: var(--accent);
+	color: #fff;
+	border-radius: 12px;
+	font-size: 20px;
+	border: none;
+}
+.btn-theme:hover {
+	background: var(--accent-hover);
+}
+
+/* CARDS */
+.kpi-card {
+	background: var(--card-bg);
+	border: 1px solid var(--border);
+	color: var(--text);
+}
+
+/* INPUTS */
+input, textarea, .file-input {
+	background: var(--card-bg);
+	color: var(--text);
+	border: 1px solid var(--border);
+}
+
+/* GRÁFICOS (iframe fundo) */
+.chart-frame {
+	background: var(--card-bg);
+}

@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: analystic-a-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: analystic-a
+  template:
+    metadata:
+      labels:
+        app: analystic-a
+    spec:
+      containers:
+      - name: analystic-a
+        image: registry/analystic-a:latest
+        ports:
+        - containerPort: 8080
+        envFrom:
+        - secretRef:
+            name: analystic-a-secrets
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          initialDelaySeconds: 10
+          periodSeconds: 10

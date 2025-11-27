@@ -1,0 +1,15 @@
+fastapi
+uvicorn
+jinja2
+python-multipart
+sqlalchemy
+psycopg2
+cryptography
+python-jose
+openai
+pandas
+plotly
+redis
+websockets
+requests
+kubernetes

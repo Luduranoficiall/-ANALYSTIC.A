@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-title">
+    <h2>PREDITIVI.A — Projeções Inteligentes</h2>
+    <p>IA integrada para prever o futuro da ANALYSTIC.A</p>
+</section>
+
+<div class="card-ai">
+    <textarea id="ai-question" placeholder="Escreva uma pergunta…"></textarea>
+    <button class="btn-primary" onclick="askAI()">Gerar Insight</button>
+
+    <div id="ai-response" class="ai-response"></div>
+</div>
+{% endblock %}

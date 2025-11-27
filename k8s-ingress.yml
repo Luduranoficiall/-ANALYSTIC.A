@@ -1,0 +1,20 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: analystic-a-ingress
+spec:
+  tls:
+  - hosts:
+      - analystic.a
+    secretName: analystic-a-tls
+  rules:
+  - host: analystic.a
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: analystic-a-service
+            port:
+              number: 80

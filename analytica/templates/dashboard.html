@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="page-title">
+    <h2>Dashboard Geral</h2>
+    <p>Visão completa da ANALYSTIC.A</p>
+</section>
+
+<div class="grid-cards">
+
+    <div class="kpi-card zoom">
+        <h3>Membros Totais</h3>
+        <p class="kpi-number" id="kpi-members">…</p>
+    </div>
+
+    <div class="kpi-card zoom">
+        <h3>Cashback Distribuído</h3>
+        <p class="kpi-number" id="kpi-cashback">…</p>
+    </div>
+
+    <div class="kpi-card zoom">
+        <h3>Parceiros Ativos</h3>
+        <p class="kpi-number" id="kpi-partners">…</p>
+    </div>
+
+    <div class="kpi-card zoom">
+        <h3>Faturamento Total</h3>
+        <p class="kpi-number" id="kpi-revenue">…</p>
+    </div>
+
+</div>
+
+<section class="charts-grid">
+
+    <iframe src="/chart?table=membros&x=data&y=total" class="chart-frame"></iframe>
+    <iframe src="/chart?table=cashback&x=data&y=valor" class="chart-frame"></iframe>
+    <iframe src="/chart?table=faturamento&x=mes&y=valor" class="chart-frame"></iframe>
+    <iframe src="/chart?table=rede&x=nivel&y=total" class="chart-frame"></iframe>
+
+</section>
+
+{% endblock %}
