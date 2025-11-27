@@ -1,0 +1,199 @@
+# ANALYTIC.A PRO ULTRA SECURE
+
+## 📘 1. MANUAL TÉCNICO DO DESENVOLVEDOR (Dev Manual)
+
+### 1. Introdução
+Este documento descreve todos os componentes técnicos do sistema ANALYTIC.A PRO ULTRA SECURE, sua arquitetura, padrões de desenvolvimento, requisitos, pipelines, APIs e melhores práticas de manutenção.
+
+**Destinado a:**
+- Desenvolvedores backend
+- Desenvolvedores frontend
+- DevOps / SRE
+- Engenheiros de dados
+- Integradores de API
+- Times de segurança
+
+### 2. Arquitetura do Sistema
+O sistema utiliza uma arquitetura cloud-native, distribuída e segura.
+
+```
+ANALYTIC.A PRO ULTRA SECURE
+│
+├── API Gateway (FastAPI)
+├── Auth Service (JWT + RSA 4096)
+├── ETL Service (Event-driven)
+├── Chart Service (Plotly)
+├── GPT Service (Local + OpenAI)
+├── Redis (Cache + Streams)
+├── PostgreSQL (Data)
+├── WebSockets Broadcast
+├── Prometheus + Grafana
+└── Frontend Ultra Premium
+```
+
+**Tecnologias:** Python 3.11, FastAPI, PostgreSQL, Redis, Docker, Kubernetes, Plotly, Prometheus, Grafana, WebSockets, OpenAI + IA Local
+
+### 3. Estrutura do Repositório
+```
+/analytica
+ ├── app.py
+ ├── db/
+ │    └── database.py
+ ├── etl/
+ │    └── etl_engine.py
+ ├── charts/
+ │    ├── chart_engine.py
+ │    └── realtime_publisher.py
+ ├── gpt/
+ │    ├── gpt_engine.py
+ │    ├── cloud_engine.py
+ │    └── local_engine.py
+ ├── realtime/
+ │    └── ws_server.py
+ ├── security/
+ │    ├── auth.py
+ │    ├── crypto.py
+ │    ├── rsa_engine.py
+ │    ├── hmac_sign.py
+ │    └── middleware.py
+ ├── tenants/
+ │    └── manager.py
+ ├── static/
+ ├── templates/
+ ├── monitoring/
+ │    └── prometheus.yml
+ ├── k8s/
+ │    ├── deployment.yml
+ │    ├── service.yml
+ │    ├── ingress.yml
+ │    └── hpa.yml
+ └── .github/
+      └── workflows/deploy.yml
+```
+
+### 4. Instalação e Setup Local
+**Requisitos:** Python 3.11, PostgreSQL 15+, Redis, Docker (opcional), OpenAI Key
+
+```bash
+pip install -r requirements.txt
+uvicorn app:app --reload
+```
+
+### 5. Configuração de Variáveis de Ambiente
+```
+DB_URL=
+OPENAI_API_KEY=
+JWT_SECRET=
+HMAC_SECRET=
+LOCAL_LLM_URL=
+REDIS_HOST=
+TENANT_ID=
+```
+
+### 6. Segurança
+- Autenticação: JWT RS256
+- Senhas: PBKDF2
+- Payloads: HMAC SHA-256
+- Dados sensíveis: AES-256-GCM
+- Token expira em 60 min
+- Refresh via endpoint seguro
+- Auditoria assinada via HMAC
+- Rotação automática de chaves AES
+
+### 7. Endpoints Principais
+| Método | Rota      | Descrição           |
+|--------|-----------|---------------------|
+| GET    | /         | Dashboard           |
+| POST   | /login    | Login JWT           |
+| POST   | /upload   | Upload + ETL        |
+| GET    | /chart    | Render de gráfico   |
+| GET    | /insights | GPT Insights        |
+| GET    | /metrics  | Prometheus          |
+
+### 8. ETL (Event-Driven)
+- Eventos: UPLOAD_COMPLETED, NEW_DATA, ANALYSIS_REQUEST
+- Upload validado por HMAC
+- ETL transforma e insere dados
+- Publica evento Redis Stream
+- WebSocket atualiza gráfico em tempo real
+
+### 9. WebSockets (Tempo real)
+`ws://SEU_DOMINIO/ws`
+
+Payload exemplo:
+```json
+{
+  "table": "vendas",
+  "x": "mes",
+  "y": "total"
+}
+```
+
+### 10. IA (Local + OpenAI)
+- IA Local (Ollama): http://localhost:11434/api/generate
+- OpenAI GPT-4.1 (fallback premium)
+
+### 11. Testes
+- Unit: pytest
+- Segurança: OWASP ZAP
+- Performance: Locust
+- Carga: k6
+
+### 12. Deploy
+- Docker: `docker-compose up -d`
+- Kubernetes: `kubectl apply -f k8s/`
+- CI/CD GitHub Actions: Automático no push para main.
+
+---
+
+## 📘 2. MANUAL DO CLIENTE / USUÁRIO FINAL (User Guide)
+
+### 1. Acesso ao Sistema
+Acesse via navegador: `https://SEU-DOMINIO.com.br`
+
+### 2. Dashboard Principal
+- KPIs principais
+- Gráficos interativos
+- Tendências
+- Indicadores de performance
+- Filtros e drill-down
+
+### 3. Como fazer upload de dados
+- Vá em Upload
+- Envie Excel, CSV ou JSON
+- Aguarde processamento
+- Gráficos atualizam automaticamente
+
+### 4. Gráficos em Tempo Real
+- Dashboard atualiza automaticamente
+- Novos pontos, linhas ou barras
+- Sem recarregar a página
+
+### 5. Insights com Inteligência Artificial
+- Vá em PREDITIVI.A
+- Digite uma pergunta
+- IA analisa dados e retorna insights
+- IA Local (LLaMA/Mistral) + OpenAI GPT-4.1
+
+### 6. Segurança
+- Criptografia ponta-a-ponta
+- Tokens seguros
+- Auditoria
+- Isolamento por cliente
+
+### 7. Versão Mobile
+- Android, iOS, PWA
+- Basta acessar no navegador ou instalar como PWA
+
+### 8. Suporte
+- suporte@analytica.com.br
+
+---
+
+## 🖥️ 3. LANDING PAGE PREMIUM
+
+O arquivo `landing.html` está pronto para uso em seu domínio ou pasta raiz do projeto.
+
+---
+
+**ANALYTIC.A PRO ULTRA SECURE — O BI mais avançado, seguro e inteligente do mercado.**
