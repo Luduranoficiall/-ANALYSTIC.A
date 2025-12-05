@@ -1,0 +1,1047 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="pbi-workspace">
+    
+    <!-- ═══════════════════════════════════════════════════════════════
+         BARRA SUPERIOR (IGUAL POWER BI)
+    ═══════════════════════════════════════════════════════════════ -->
+    <header class="pbi-header">
+        <div class="pbi-header-left">
+            <div class="pbi-logo">
+                <span class="logo-icon">📊</span>
+                <span class="logo-text">ANALYSTIC<span class="logo-pro">.A</span></span>
+            </div>
+            <nav class="pbi-nav">
+                <a href="/" class="nav-link active">Início</a>
+                <a href="#" class="nav-link" onclick="showTab('report')">Relatórios</a>
+                <a href="#" class="nav-link" onclick="showTab('data')">Dados</a>
+                <a href="#" class="nav-link" onclick="showTab('model')">Modelo</a>
+            </nav>
+        </div>
+        <div class="pbi-header-center">
+            <div class="report-title">
+                <input type="text" value="Dashboard Principal - {{ user }}" class="report-name-input" id="reportName">
+                <span class="save-status" id="saveStatus">💾 Salvo</span>
+            </div>
+        </div>
+        <div class="pbi-header-right">
+            <button class="pbi-btn" onclick="shareReport()">🔗 Compartilhar</button>
+            <button class="pbi-btn primary" onclick="publishReport()">☁️ Publicar</button>
+            <div class="user-menu">
+                <span class="user-avatar">{{ user[0]|upper }}</span>
+            </div>
+        </div>
+    </header>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         BARRA DE FERRAMENTAS (RIBBON)
+    ═══════════════════════════════════════════════════════════════ -->
+    <div class="pbi-ribbon">
+        <div class="ribbon-group">
+            <span class="ribbon-title">Arquivo</span>
+            <div class="ribbon-buttons">
+                <button class="ribbon-btn" onclick="newReport()">
+                    <span class="ribbon-icon">📄</span>
+                    <span>Novo</span>
+                </button>
+                <button class="ribbon-btn" onclick="openReport()">
+                    <span class="ribbon-icon">📂</span>
+                    <span>Abrir</span>
+                </button>
+                <button class="ribbon-btn" onclick="saveReport()">
+                    <span class="ribbon-icon">💾</span>
+                    <span>Salvar</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="ribbon-divider"></div>
+        
+        <div class="ribbon-group">
+            <span class="ribbon-title">Inserir</span>
+            <div class="ribbon-buttons">
+                <button class="ribbon-btn" onclick="addVisual('card')">
+                    <span class="ribbon-icon">🔢</span>
+                    <span>Cartão</span>
+                </button>
+                <button class="ribbon-btn" onclick="addVisual('chart')">
+                    <span class="ribbon-icon">📊</span>
+                    <span>Gráfico</span>
+                </button>
+                <button class="ribbon-btn" onclick="addVisual('table')">
+                    <span class="ribbon-icon">📋</span>
+                    <span>Tabela</span>
+                </button>
+                <button class="ribbon-btn" onclick="addVisual('map')">
+                    <span class="ribbon-icon">🗺️</span>
+                    <span>Mapa</span>
+                </button>
+                <button class="ribbon-btn" onclick="addVisual('gauge')">
+                    <span class="ribbon-icon">⏱️</span>
+                    <span>Medidor</span>
+                </button>
+                <button class="ribbon-btn" onclick="addVisual('treemap')">
+                    <span class="ribbon-icon">🌳</span>
+                    <span>Treemap</span>
+                </button>
+                <button class="ribbon-btn" onclick="addVisual('kpi')">
+                    <span class="ribbon-icon">🎯</span>
+                    <span>KPI</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="ribbon-divider"></div>
+        
+        <div class="ribbon-group">
+            <span class="ribbon-title">Dados</span>
+            <div class="ribbon-buttons">
+                <button class="ribbon-btn highlight" onclick="getData()">
+                    <span class="ribbon-icon">📥</span>
+                    <span>Obter Dados</span>
+                </button>
+                <button class="ribbon-btn" onclick="transformData()">
+                    <span class="ribbon-icon">⚙️</span>
+                    <span>Transformar</span>
+                </button>
+                <button class="ribbon-btn" onclick="refreshAll()">
+                    <span class="ribbon-icon">🔄</span>
+                    <span>Atualizar</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="ribbon-divider"></div>
+        
+        <div class="ribbon-group">
+            <span class="ribbon-title">IA</span>
+            <div class="ribbon-buttons">
+                <button class="ribbon-btn ai-btn" onclick="openAIChat()">
+                    <span class="ribbon-icon">🤖</span>
+                    <span>Perguntar IA</span>
+                </button>
+                <button class="ribbon-btn" onclick="autoInsights()">
+                    <span class="ribbon-icon">💡</span>
+                    <span>Insights Auto</span>
+                </button>
+                <button class="ribbon-btn" onclick="predictData()">
+                    <span class="ribbon-icon">🔮</span>
+                    <span>Previsão</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         ÁREA PRINCIPAL
+    ═══════════════════════════════════════════════════════════════ -->
+    <div class="pbi-main">
+        
+        <!-- PAINEL DE FILTROS (ESQUERDA) -->
+        <aside class="pbi-filters-panel">
+            <div class="panel-header">
+                <h3>🎚️ Filtros</h3>
+                <button class="btn-clear" onclick="clearFilters()">Limpar</button>
+            </div>
+            
+            <div class="filter-section">
+                <label>📅 Período</label>
+                <select class="filter-select" id="filterPeriod" onchange="applyFilters()">
+                    <option value="all">Todo o período</option>
+                    <option value="today">Hoje</option>
+                    <option value="week">Esta semana</option>
+                    <option value="month" selected>Este mês</option>
+                    <option value="quarter">Este trimestre</option>
+                    <option value="year">Este ano</option>
+                    <option value="custom">Personalizado...</option>
+                </select>
+            </div>
+            
+            <div class="filter-section">
+                <label>📍 Região</label>
+                <div class="filter-chips">
+                    <label class="chip active"><input type="checkbox" checked> Sul</label>
+                    <label class="chip active"><input type="checkbox" checked> Sudeste</label>
+                    <label class="chip active"><input type="checkbox" checked> Centro-Oeste</label>
+                    <label class="chip active"><input type="checkbox" checked> Nordeste</label>
+                    <label class="chip active"><input type="checkbox" checked> Norte</label>
+                </div>
+            </div>
+            
+            <div class="filter-section">
+                <label>🏷️ Categoria</label>
+                <div class="filter-chips">
+                    <label class="chip active"><input type="checkbox" checked> Varejo</label>
+                    <label class="chip active"><input type="checkbox" checked> Serviços</label>
+                    <label class="chip active"><input type="checkbox" checked> Tecnologia</label>
+                    <label class="chip active"><input type="checkbox" checked> Indústria</label>
+                </div>
+            </div>
+            
+            <div class="filter-section">
+                <label>💰 Faixa de Valor</label>
+                <div class="range-filter">
+                    <input type="range" min="0" max="100000" value="0" class="range-input" id="minValue">
+                    <span id="rangeDisplay">R$ 0 - R$ 100.000+</span>
+                </div>
+            </div>
+            
+            <div class="filter-section">
+                <label>🔍 Pesquisa</label>
+                <input type="text" class="filter-search" placeholder="Pesquisar em todos os dados..." id="globalSearch">
+            </div>
+        </aside>
+
+        <!-- CANVAS DO DASHBOARD -->
+        <main class="pbi-canvas" id="dashboardCanvas">
+            
+            <!-- LINHA 1: KPI CARDS -->
+            <div class="pbi-row kpi-row">
+                <div class="pbi-tile kpi-tile" data-tile-id="kpi1" draggable="true">
+                    <div class="tile-header">
+                        <span class="tile-title">Total de Membros</span>
+                        <button class="tile-menu" onclick="tileOptions(this)">⋮</button>
+                    </div>
+                    <div class="kpi-value" id="kpiMembers">12.847</div>
+                    <div class="kpi-change positive">
+                        <span class="change-icon">▲</span>
+                        <span class="change-value">+1.423 (12,5%)</span>
+                        <span class="change-period">vs mês anterior</span>
+                    </div>
+                    <div class="kpi-sparkline" id="sparkline1"></div>
+                </div>
+                
+                <div class="pbi-tile kpi-tile" data-tile-id="kpi2" draggable="true">
+                    <div class="tile-header">
+                        <span class="tile-title">Faturamento</span>
+                        <button class="tile-menu" onclick="tileOptions(this)">⋮</button>
+                    </div>
+                    <div class="kpi-value currency" id="kpiRevenue">R$ 847.293</div>
+                    <div class="kpi-change positive">
+                        <span class="change-icon">▲</span>
+                        <span class="change-value">+R$ 65.230 (8,3%)</span>
+                        <span class="change-period">vs mês anterior</span>
+                    </div>
+                    <div class="kpi-sparkline" id="sparkline2"></div>
+                </div>
+                
+                <div class="pbi-tile kpi-tile" data-tile-id="kpi3" draggable="true">
+                    <div class="tile-header">
+                        <span class="tile-title">Ticket Médio</span>
+                        <button class="tile-menu" onclick="tileOptions(this)">⋮</button>
+                    </div>
+                    <div class="kpi-value currency" id="kpiTicket">R$ 65,90</div>
+                    <div class="kpi-change positive">
+                        <span class="change-icon">▲</span>
+                        <span class="change-value">+R$ 7,20 (12,3%)</span>
+                        <span class="change-period">vs mês anterior</span>
+                    </div>
+                    <div class="kpi-sparkline" id="sparkline3"></div>
+                </div>
+                
+                <div class="pbi-tile kpi-tile" data-tile-id="kpi4" draggable="true">
+                    <div class="tile-header">
+                        <span class="tile-title">Taxa de Conversão</span>
+                        <button class="tile-menu" onclick="tileOptions(this)">⋮</button>
+                    </div>
+                    <div class="kpi-value percent" id="kpiConversion">24,8%</div>
+                    <div class="kpi-change positive">
+                        <span class="change-icon">▲</span>
+                        <span class="change-value">+3,2 pts</span>
+                        <span class="change-period">vs mês anterior</span>
+                    </div>
+                    <div class="kpi-sparkline" id="sparkline4"></div>
+                </div>
+            </div>
+
+            <!-- LINHA 2: GRÁFICOS PRINCIPAIS -->
+            <div class="pbi-row charts-row">
+                <div class="pbi-tile chart-tile large" data-tile-id="chart1" draggable="true">
+                    <div class="tile-header">
+                        <span class="tile-title">📈 Evolução do Faturamento</span>
+                        <div class="tile-controls">
+                            <select class="tile-select" onchange="updateChartType(this, 'mainChart')">
+                                <option value="line" selected>Linha</option>
+                                <option value="area">Área</option>
+                                <option value="bar">Barras</option>
+                            </select>
+                            <button class="tile-btn" onclick="drillDown('chart1')">🔍</button>
+                            <button class="tile-btn" onclick="exportTile('chart1')">📥</button>
+                            <button class="tile-menu" onclick="tileOptions(this)">⋮</button>
+                        </div>
+                    </div>
+                    <div class="chart-body" id="mainChart"></div>
+                </div>
+                
+                <div class="pbi-tile chart-tile" data-tile-id="chart2" draggable="true">
+                    <div class="tile-header">
+                        <span class="tile-title">🍩 Por Categoria</span>
+                        <div class="tile-controls">
+                            <button class="tile-btn" onclick="drillDown('chart2')">🔍</button>
+                            <button class="tile-menu" onclick="tileOptions(this)">⋮</button>
+                        </div>
+                    </div>
+                    <div class="chart-body" id="pieChart"></div>
+                </div>
+            </div>
+
+            <!-- LINHA 3: MAPA + GAUGE + TREEMAP -->
+            <div class="pbi-row mixed-row">
+                <div class="pbi-tile chart-tile" data-tile-id="map1" draggable="true">
+                    <div class="tile-header">
+                        <span class="tile-title">🗺️ Mapa de Calor - Brasil</span>
+                        <div class="tile-controls">
+                            <button class="tile-menu" onclick="tileOptions(this)">⋮</button>
+                        </div>
+                    </div>
+                    <div class="chart-body" id="heatMap"></div>
+                </div>
+                
+                <div class="pbi-tile chart-tile gauge-tile" data-tile-id="gauge1" draggable="true">
+                    <div class="tile-header">
+                        <span class="tile-title">⏱️ Meta Mensal</span>
+                        <div class="tile-controls">
+                            <button class="tile-menu" onclick="tileOptions(this)">⋮</button>
+                        </div>
+                    </div>
+                    <div class="chart-body" id="gaugeChart"></div>
+                    <div class="gauge-legend">
+                        <span>Realizado: <strong>R$ 847K</strong></span>
+                        <span>Meta: <strong>R$ 1M</strong></span>
+                    </div>
+                </div>
+                
+                <div class="pbi-tile chart-tile" data-tile-id="treemap1" draggable="true">
+                    <div class="tile-header">
+                        <span class="tile-title">🌳 Treemap - Produtos</span>
+                        <div class="tile-controls">
+                            <button class="tile-btn" onclick="drillDown('treemap1')">🔍</button>
+                            <button class="tile-menu" onclick="tileOptions(this)">⋮</button>
+                        </div>
+                    </div>
+                    <div class="chart-body" id="treeMap"></div>
+                </div>
+            </div>
+
+            <!-- LINHA 4: TABELA DE DADOS -->
+            <div class="pbi-row table-row">
+                <div class="pbi-tile table-tile" data-tile-id="table1" draggable="true">
+                    <div class="tile-header">
+                        <span class="tile-title">📋 Detalhamento de Dados</span>
+                        <div class="tile-controls">
+                            <input type="text" class="tile-search" placeholder="Filtrar..." id="tableFilter">
+                            <button class="tile-btn" onclick="exportTile('table1')">📥 Excel</button>
+                            <button class="tile-menu" onclick="tileOptions(this)">⋮</button>
+                        </div>
+                    </div>
+                    <div class="table-body">
+                        <table class="pbi-table" id="dataTable">
+                            <thead>
+                                <tr>
+                                    <th onclick="sortTable(0)">Cliente ↕</th>
+                                    <th onclick="sortTable(1)">Região ↕</th>
+                                    <th onclick="sortTable(2)">Categoria ↕</th>
+                                    <th onclick="sortTable(3)">Valor ↕</th>
+                                    <th onclick="sortTable(4)">Crescimento ↕</th>
+                                    <th onclick="sortTable(5)">Status ↕</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><strong>Empresa Alpha</strong></td>
+                                    <td>Sudeste</td>
+                                    <td><span class="cat-badge tech">Tecnologia</span></td>
+                                    <td class="value">R$ 125.430</td>
+                                    <td class="positive">+23,5%</td>
+                                    <td><span class="status-dot active"></span> Ativo</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Corp Beta Ltda</strong></td>
+                                    <td>Sul</td>
+                                    <td><span class="cat-badge retail">Varejo</span></td>
+                                    <td class="value">R$ 98.200</td>
+                                    <td class="positive">+18,2%</td>
+                                    <td><span class="status-dot active"></span> Ativo</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Grupo Gamma</strong></td>
+                                    <td>Nordeste</td>
+                                    <td><span class="cat-badge services">Serviços</span></td>
+                                    <td class="value">R$ 87.650</td>
+                                    <td class="positive">+15,8%</td>
+                                    <td><span class="status-dot active"></span> Ativo</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Delta Industries</strong></td>
+                                    <td>Centro-Oeste</td>
+                                    <td><span class="cat-badge industry">Indústria</span></td>
+                                    <td class="value">R$ 156.800</td>
+                                    <td class="positive">+28,4%</td>
+                                    <td><span class="status-dot active"></span> Ativo</td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Epsilon Tech</strong></td>
+                                    <td>Sudeste</td>
+                                    <td><span class="cat-badge tech">Tecnologia</span></td>
+                                    <td class="value">R$ 203.100</td>
+                                    <td class="positive">+35,2%</td>
+                                    <td><span class="status-dot active"></span> Ativo</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="table-footer">
+                        <span>Mostrando 5 de 1.247 registros</span>
+                        <div class="pagination">
+                            <button class="page-btn">←</button>
+                            <button class="page-btn active">1</button>
+                            <button class="page-btn">2</button>
+                            <button class="page-btn">3</button>
+                            <button class="page-btn">...</button>
+                            <button class="page-btn">125</button>
+                            <button class="page-btn">→</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- PAINEL DE VISUALIZAÇÕES (DIREITA) -->
+        <aside class="pbi-viz-panel">
+            <div class="panel-header">
+                <h3>📊 Visualizações</h3>
+            </div>
+            
+            <div class="viz-grid">
+                <button class="viz-item" onclick="addVisual('bar')" title="Gráfico de Barras">📊</button>
+                <button class="viz-item" onclick="addVisual('line')" title="Gráfico de Linhas">📈</button>
+                <button class="viz-item" onclick="addVisual('pie')" title="Gráfico de Pizza">🥧</button>
+                <button class="viz-item" onclick="addVisual('donut')" title="Gráfico Rosca">🍩</button>
+                <button class="viz-item" onclick="addVisual('area')" title="Gráfico de Área">📉</button>
+                <button class="viz-item" onclick="addVisual('scatter')" title="Dispersão">⚬</button>
+                <button class="viz-item" onclick="addVisual('treemap')" title="Treemap">🌳</button>
+                <button class="viz-item" onclick="addVisual('map')" title="Mapa">🗺️</button>
+                <button class="viz-item" onclick="addVisual('gauge')" title="Medidor">⏱️</button>
+                <button class="viz-item" onclick="addVisual('kpi')" title="KPI">🎯</button>
+                <button class="viz-item" onclick="addVisual('card')" title="Cartão">🔢</button>
+                <button class="viz-item" onclick="addVisual('table')" title="Tabela">📋</button>
+                <button class="viz-item" onclick="addVisual('matrix')" title="Matriz">⊞</button>
+                <button class="viz-item" onclick="addVisual('slicer')" title="Segmentação">🎚️</button>
+                <button class="viz-item" onclick="addVisual('funnel')" title="Funil">🔻</button>
+                <button class="viz-item" onclick="addVisual('waterfall')" title="Cascata">💧</button>
+            </div>
+            
+            <div class="panel-section">
+                <h4>📁 Campos</h4>
+                <div class="fields-tree">
+                    <div class="field-table">
+                        <span class="table-icon">📋</span>
+                        <span class="table-name">Vendas</span>
+                        <span class="expand-icon">▼</span>
+                    </div>
+                    <div class="field-list">
+                        <div class="field-item" draggable="true">🔢 Valor</div>
+                        <div class="field-item" draggable="true">📅 Data</div>
+                        <div class="field-item" draggable="true">🏷️ Categoria</div>
+                        <div class="field-item" draggable="true">📍 Região</div>
+                        <div class="field-item" draggable="true">👤 Cliente</div>
+                        <div class="field-item" draggable="true">📦 Produto</div>
+                    </div>
+                    
+                    <div class="field-table">
+                        <span class="table-icon">📋</span>
+                        <span class="table-name">Clientes</span>
+                        <span class="expand-icon">▶</span>
+                    </div>
+                    
+                    <div class="field-table">
+                        <span class="table-icon">📋</span>
+                        <span class="table-name">Produtos</span>
+                        <span class="expand-icon">▶</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         MODAL: OBTER DADOS
+    ═══════════════════════════════════════════════════════════════ -->
+    <div class="pbi-modal" id="getDataModal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h2>📥 Obter Dados</h2>
+                <button class="modal-close" onclick="closeModal('getDataModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="data-sources">
+                    <div class="source-category">
+                        <h3>📁 Arquivo</h3>
+                        <div class="source-grid">
+                            <button class="source-item" onclick="loadExcel()">
+                                <span class="source-icon">📗</span>
+                                <span>Excel</span>
+                            </button>
+                            <button class="source-item" onclick="loadCSV()">
+                                <span class="source-icon">📄</span>
+                                <span>CSV</span>
+                            </button>
+                            <button class="source-item" onclick="loadJSON()">
+                                <span class="source-icon">{ }</span>
+                                <span>JSON</span>
+                            </button>
+                            <button class="source-item" onclick="loadXML()">
+                                <span class="source-icon">📰</span>
+                                <span>XML</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="source-category">
+                        <h3>🗄️ Banco de Dados</h3>
+                        <div class="source-grid">
+                            <button class="source-item" onclick="loadSQL()">
+                                <span class="source-icon">🐘</span>
+                                <span>PostgreSQL</span>
+                            </button>
+                            <button class="source-item" onclick="loadMySQL()">
+                                <span class="source-icon">🐬</span>
+                                <span>MySQL</span>
+                            </button>
+                            <button class="source-item" onclick="loadSQLite()">
+                                <span class="source-icon">📦</span>
+                                <span>SQLite</span>
+                            </button>
+                            <button class="source-item" onclick="loadMongo()">
+                                <span class="source-icon">🍃</span>
+                                <span>MongoDB</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="source-category">
+                        <h3>☁️ Nuvem & APIs</h3>
+                        <div class="source-grid">
+                            <button class="source-item" onclick="loadGoogleSheets()">
+                                <span class="source-icon">📊</span>
+                                <span>Google Sheets</span>
+                            </button>
+                            <button class="source-item" onclick="loadAPI()">
+                                <span class="source-icon">🔌</span>
+                                <span>REST API</span>
+                            </button>
+                            <button class="source-item" onclick="loadWebScraping()">
+                                <span class="source-icon">🌐</span>
+                                <span>Web Scraping</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════════════════════════════
+         MODAL: CHAT IA
+    ═══════════════════════════════════════════════════════════════ -->
+    <div class="pbi-modal" id="aiChatModal">
+        <div class="modal-content ai-chat">
+            <div class="modal-header">
+                <h2>🤖 ANALYSTIC.IA — Assistente Inteligente</h2>
+                <button class="modal-close" onclick="closeModal('aiChatModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="ai-chat-container">
+                    <div class="ai-messages" id="aiMessages">
+                        <div class="ai-message bot">
+                            <span class="ai-avatar">🤖</span>
+                            <div class="ai-bubble">
+                                Olá! Sou a <strong>ANALYSTIC.IA</strong>, sua assistente de dados. 
+                                Posso ajudar com:
+                                <ul>
+                                    <li>📊 Análises e insights automáticos</li>
+                                    <li>🔮 Previsões e tendências</li>
+                                    <li>📝 Explicar seus dados</li>
+                                    <li>💡 Sugestões de visualizações</li>
+                                </ul>
+                                O que você gostaria de saber?
+                            </div>
+                        </div>
+                    </div>
+                    <div class="ai-suggestions">
+                        <button onclick="askAI('Quais são os principais insights dos meus dados?')">💡 Principais insights</button>
+                        <button onclick="askAI('Qual a previsão para o próximo mês?')">🔮 Previsão próximo mês</button>
+                        <button onclick="askAI('Quais produtos estão vendendo menos?')">📉 Produtos em baixa</button>
+                    </div>
+                    <div class="ai-input-area">
+                        <input type="text" id="aiInput" placeholder="Pergunte qualquer coisa sobre seus dados..." onkeypress="handleAIKey(event)">
+                        <button class="ai-send" onclick="sendAIMessage()">➤</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- SCRIPTS -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// INICIALIZAÇÃO DOS GRÁFICOS
+// ═══════════════════════════════════════════════════════════════
+
+const colors = {
+    primary: '#00d4ff',
+    secondary: '#7c3aed',
+    success: '#10b981',
+    warning: '#f59e0b',
+    danger: '#ef4444',
+    gradient: ['#00d4ff', '#7c3aed', '#10b981', '#f59e0b', '#ef4444']
+};
+
+const chartConfig = {
+    responsive: true,
+    displayModeBar: false
+};
+
+const darkLayout = {
+    paper_bgcolor: 'transparent',
+    plot_bgcolor: 'transparent',
+    font: { color: '#e0e0e0', family: 'Inter, sans-serif' },
+    margin: { l: 50, r: 30, t: 30, b: 50 }
+};
+
+// GRÁFICO PRINCIPAL - LINHA
+function initMainChart() {
+    const months = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    const data = [{
+        x: months,
+        y: [520000, 580000, 620000, 590000, 680000, 720000, 750000, 790000, 820000, 780000, 830000, 847293],
+        type: 'scatter',
+        mode: 'lines+markers',
+        name: 'Faturamento',
+        line: { color: colors.primary, width: 3, shape: 'spline' },
+        marker: { size: 8, color: colors.primary },
+        fill: 'tozeroy',
+        fillcolor: 'rgba(0, 212, 255, 0.1)'
+    }, {
+        x: months,
+        y: [480000, 520000, 550000, 530000, 600000, 640000, 680000, 710000, 740000, 720000, 760000, 780000],
+        type: 'scatter',
+        mode: 'lines',
+        name: 'Ano Anterior',
+        line: { color: '#666', width: 2, dash: 'dash' }
+    }];
+    
+    Plotly.newPlot('mainChart', data, {
+        ...darkLayout,
+        showlegend: true,
+        legend: { x: 0, y: 1.1, orientation: 'h' },
+        xaxis: { gridcolor: 'rgba(255,255,255,0.05)' },
+        yaxis: { gridcolor: 'rgba(255,255,255,0.05)', tickprefix: 'R$ ', tickformat: ',.0f' }
+    }, chartConfig);
+}
+
+// GRÁFICO PIZZA/DONUT
+function initPieChart() {
+    const data = [{
+        values: [35, 28, 20, 12, 5],
+        labels: ['Tecnologia', 'Varejo', 'Serviços', 'Indústria', 'Outros'],
+        type: 'pie',
+        hole: 0.55,
+        marker: { colors: colors.gradient },
+        textinfo: 'percent',
+        textposition: 'inside',
+        textfont: { color: '#fff', size: 12 },
+        hovertemplate: '%{label}<br>%{value} clientes<br>%{percent}<extra></extra>'
+    }];
+    
+    Plotly.newPlot('pieChart', data, {
+        ...darkLayout,
+        showlegend: true,
+        legend: { x: 0.5, y: -0.1, orientation: 'h', xanchor: 'center' },
+        annotations: [{
+            text: '<b>1.247</b><br>Total',
+            x: 0.5, y: 0.5,
+            font: { size: 16, color: '#fff' },
+            showarrow: false
+        }]
+    }, chartConfig);
+}
+
+// MAPA DE CALOR - BRASIL
+function initHeatMap() {
+    const data = [{
+        type: 'choropleth',
+        locations: ['BR-SP', 'BR-RJ', 'BR-MG', 'BR-RS', 'BR-PR', 'BR-SC', 'BR-BA', 'BR-PE', 'BR-CE', 'BR-DF'],
+        z: [420, 180, 120, 95, 85, 75, 45, 35, 30, 65],
+        geojson: 'https://raw.githubusercontent.com/codeforamerica/click_that_hood/master/public/data/brazil-states.geojson',
+        featureidkey: 'properties.sigla',
+        colorscale: [[0, '#1a1f2e'], [0.5, '#00d4ff'], [1, '#7c3aed']],
+        showscale: true,
+        colorbar: { title: 'Vendas (K)', thickness: 15 }
+    }];
+    
+    // Usando barras como fallback
+    const dataBar = [{
+        x: ['SP', 'RJ', 'MG', 'RS', 'PR', 'SC', 'BA', 'DF', 'PE', 'CE'],
+        y: [420, 180, 120, 95, 85, 75, 65, 45, 35, 30],
+        type: 'bar',
+        marker: {
+            color: [420, 180, 120, 95, 85, 75, 65, 45, 35, 30],
+            colorscale: [[0, '#1a1f2e'], [0.5, '#00d4ff'], [1, '#7c3aed']]
+        }
+    }];
+    
+    Plotly.newPlot('heatMap', dataBar, {
+        ...darkLayout,
+        xaxis: { title: 'Estado', gridcolor: 'rgba(255,255,255,0.05)' },
+        yaxis: { title: 'Vendas (K)', gridcolor: 'rgba(255,255,255,0.05)' }
+    }, chartConfig);
+}
+
+// GAUGE - META
+function initGaugeChart() {
+    const data = [{
+        type: 'indicator',
+        mode: 'gauge+number',
+        value: 84.7,
+        number: { suffix: '%', font: { size: 40, color: '#00d4ff' } },
+        gauge: {
+            axis: { range: [0, 100], tickcolor: '#666' },
+            bar: { color: '#00d4ff', thickness: 0.8 },
+            bgcolor: '#1a1f2e',
+            borderwidth: 0,
+            steps: [
+                { range: [0, 50], color: 'rgba(239, 68, 68, 0.3)' },
+                { range: [50, 80], color: 'rgba(245, 158, 11, 0.3)' },
+                { range: [80, 100], color: 'rgba(16, 185, 129, 0.3)' }
+            ],
+            threshold: {
+                line: { color: '#10b981', width: 4 },
+                thickness: 0.75,
+                value: 100
+            }
+        }
+    }];
+    
+    Plotly.newPlot('gaugeChart', data, {
+        ...darkLayout,
+        margin: { l: 30, r: 30, t: 30, b: 10 }
+    }, chartConfig);
+}
+
+// TREEMAP
+function initTreeMap() {
+    const data = [{
+        type: 'treemap',
+        labels: ['Produtos', 'Tech', 'Laptops', 'Smartphones', 'Tablets', 'Varejo', 'Roupas', 'Calçados', 'Acessórios', 'Serviços', 'Consultoria', 'Suporte'],
+        parents: ['', 'Produtos', 'Tech', 'Tech', 'Tech', 'Produtos', 'Varejo', 'Varejo', 'Varejo', 'Produtos', 'Serviços', 'Serviços'],
+        values: [0, 0, 150, 120, 80, 0, 90, 70, 40, 0, 100, 60],
+        textinfo: 'label+value',
+        marker: {
+            colors: ['#1a1f2e', '#00d4ff', '#00b8e6', '#00a0cc', '#0088b3', '#7c3aed', '#6d28d9', '#5b21b6', '#4c1d95', '#10b981', '#059669', '#047857'],
+            line: { width: 1, color: '#0a0f1a' }
+        },
+        pathbar: { visible: true }
+    }];
+    
+    Plotly.newPlot('treeMap', data, {
+        ...darkLayout,
+        margin: { l: 10, r: 10, t: 30, b: 10 }
+    }, chartConfig);
+}
+
+// SPARKLINES
+function initSparklines() {
+    const sparkData = [
+        [45, 52, 49, 58, 55, 62, 68, 72],
+        [320, 380, 350, 420, 410, 480, 520, 547],
+        [52, 55, 58, 54, 62, 65, 63, 66],
+        [18, 20, 19, 22, 21, 23, 24, 25]
+    ];
+    
+    sparkData.forEach((data, i) => {
+        const trace = [{
+            y: data,
+            type: 'scatter',
+            mode: 'lines',
+            line: { color: colors.primary, width: 2 },
+            fill: 'tozeroy',
+            fillcolor: 'rgba(0, 212, 255, 0.1)'
+        }];
+        
+        Plotly.newPlot(`sparkline${i+1}`, trace, {
+            ...darkLayout,
+            margin: { l: 0, r: 0, t: 5, b: 5 },
+            xaxis: { visible: false },
+            yaxis: { visible: false },
+            height: 40
+        }, { responsive: true, displayModeBar: false });
+    });
+}
+
+// INICIALIZAR TODOS
+document.addEventListener('DOMContentLoaded', function() {
+    initMainChart();
+    initPieChart();
+    initHeatMap();
+    initGaugeChart();
+    initTreeMap();
+    initSparklines();
+});
+
+// ═══════════════════════════════════════════════════════════════
+// FUNÇÕES DE INTERAÇÃO
+// ═══════════════════════════════════════════════════════════════
+
+function showNotification(message, type = 'info') {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.innerHTML = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
+
+function getData() {
+    document.getElementById('getDataModal').classList.add('active');
+}
+
+function openAIChat() {
+    document.getElementById('aiChatModal').classList.add('active');
+    checkAIStatus();
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+}
+
+async function sendAIMessage() {
+    const input = document.getElementById('aiInput');
+    const message = input.value.trim();
+    if (!message) return;
+    
+    const container = document.getElementById('aiMessages');
+    
+    // Mensagem do usuário
+    container.innerHTML += `
+        <div class="ai-message user">
+            <div class="ai-bubble">${message}</div>
+            <span class="ai-avatar">👤</span>
+        </div>
+    `;
+    
+    input.value = '';
+    
+    // Mostra "digitando..."
+    const typingId = 'typing-' + Date.now();
+    container.innerHTML += `
+        <div class="ai-message bot" id="${typingId}">
+            <span class="ai-avatar">🤖</span>
+            <div class="ai-bubble typing">
+                <span class="dot"></span>
+                <span class="dot"></span>
+                <span class="dot"></span>
+            </div>
+        </div>
+    `;
+    container.scrollTop = container.scrollHeight;
+    
+    // Chama API real do Ollama/Gemini
+    try {
+        const response = await fetch('/api/ai/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                message: message,
+                prefer_local: true  // Prioriza Ollama (local/grátis)
+            })
+        });
+        
+        const data = await response.json();
+        
+        // Remove "digitando..."
+        document.getElementById(typingId)?.remove();
+        
+        if (data.success) {
+            container.innerHTML += `
+                <div class="ai-message bot">
+                    <span class="ai-avatar">🤖</span>
+                    <div class="ai-bubble">
+                        ${data.response.replace(/\n/g, '<br>')}
+                        <div class="ai-source">${data.source} • ${data.model || ''}</div>
+                    </div>
+                </div>
+            `;
+        } else {
+            container.innerHTML += `
+                <div class="ai-message bot">
+                    <span class="ai-avatar">⚠️</span>
+                    <div class="ai-bubble error">
+                        ${data.response || 'Erro ao processar. Verifique se o Ollama está rodando (ollama serve).'}
+                    </div>
+                </div>
+            `;
+        }
+    } catch (error) {
+        document.getElementById(typingId)?.remove();
+        container.innerHTML += `
+            <div class="ai-message bot">
+                <span class="ai-avatar">❌</span>
+                <div class="ai-bubble error">
+                    Erro de conexão. Execute <code>ollama serve</code> para iniciar a IA local.
+                </div>
+            </div>
+        `;
+    }
+    
+    container.scrollTop = container.scrollHeight;
+}
+
+async function askAI(question) {
+    document.getElementById('aiInput').value = question;
+    await sendAIMessage();
+}
+
+function handleAIKey(e) {
+    if (e.key === 'Enter') sendAIMessage();
+}
+
+// Verificar status da IA ao abrir
+async function checkAIStatus() {
+    try {
+        const response = await fetch('/api/ai/status');
+        const status = await response.json();
+        
+        let statusText = '';
+        if (status.ollama?.available) {
+            statusText += `🦙 Ollama: ✅ (${status.ollama.active_model}) `;
+        } else {
+            statusText += '🦙 Ollama: ❌ ';
+        }
+        
+        if (status.gemini?.available) {
+            statusText += '✨ Gemini: ✅';
+        } else {
+            statusText += '✨ Gemini: ❌';
+        }
+        
+        console.log('AI Status:', statusText);
+    } catch (e) {
+        console.log('AI Status check failed');
+    }
+}
+
+// Checa status ao carregar
+document.addEventListener('DOMContentLoaded', checkAIStatus);
+
+function applyFilters() {
+    showNotification('🎚️ Filtros aplicados!', 'success');
+}
+
+function clearFilters() {
+    showNotification('🧹 Filtros limpos!', 'info');
+}
+
+function addVisual(type) {
+    showNotification(`➕ Adicionando visualização: ${type}`, 'info');
+}
+
+function exportTile(id) {
+    showNotification(`📥 Exportando ${id}...`, 'info');
+}
+
+function drillDown(id) {
+    showNotification(`🔍 Drill-down em ${id}`, 'info');
+}
+
+function shareReport() {
+    showNotification('🔗 Link de compartilhamento copiado!', 'success');
+}
+
+function publishReport() {
+    showNotification('☁️ Relatório publicado com sucesso!', 'success');
+}
+
+function saveReport() {
+    document.getElementById('saveStatus').textContent = '💾 Salvando...';
+    setTimeout(() => {
+        document.getElementById('saveStatus').textContent = '✅ Salvo';
+    }, 1000);
+}
+
+function refreshAll() {
+    showNotification('🔄 Atualizando todos os dados...', 'info');
+}
+
+function loadExcel() {
+    closeModal('getDataModal');
+    window.location.href = '/upload';
+}
+
+function loadCSV() {
+    closeModal('getDataModal');
+    window.location.href = '/upload';
+}
+
+// Ordenação da tabela
+function sortTable(n) {
+    const table = document.getElementById('dataTable');
+    let rows, switching = true, i, shouldSwitch, dir = 'asc', switchcount = 0;
+    
+    while (switching) {
+        switching = false;
+        rows = table.rows;
+        
+        for (i = 1; i < rows.length - 1; i++) {
+            shouldSwitch = false;
+            const x = rows[i].getElementsByTagName('TD')[n];
+            const y = rows[i + 1].getElementsByTagName('TD')[n];
+            
+            if (dir === 'asc') {
+                if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            } else {
+                if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                    shouldSwitch = true;
+                    break;
+                }
+            }
+        }
+        
+        if (shouldSwitch) {
+            rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+            switching = true;
+            switchcount++;
+        } else if (switchcount === 0 && dir === 'asc') {
+            dir = 'desc';
+            switching = true;
+        }
+    }
+}
+
+// Filtro da tabela
+document.getElementById('tableFilter')?.addEventListener('input', function(e) {
+    const filter = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('#dataTable tbody tr');
+    rows.forEach(row => {
+        row.style.display = row.textContent.toLowerCase().includes(filter) ? '' : 'none';
+    });
+});
+
+// Chips de filtro
+document.querySelectorAll('.chip input').forEach(checkbox => {
+    checkbox.addEventListener('change', function() {
+        this.parentElement.classList.toggle('active', this.checked);
+        applyFilters();
+    });
+});
+</script>
+{% endblock %}

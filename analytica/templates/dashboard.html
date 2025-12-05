@@ -1,41 +1,317 @@
 {% extends "base.html" %}
+
 {% block content %}
-<section class="page-title">
-    <h2>Dashboard Geral</h2>
-    <p>Visão completa da ANALYSTIC.A</p>
-</section>
+<div class="dashboard-container">
+    
+    <!-- HEADER DO DASHBOARD -->
+    <header class="dashboard-header">
+        <div class="header-left">
+            <h1>📊 Painel Principal</h1>
+            <p class="subtitle">Bem-vindo(a), <strong>{{ user }}</strong> | Última atualização: <span id="last-update"></span></p>
+        </div>
+        <div class="header-right">
+            <button class="btn-icon" onclick="refreshData()" title="Atualizar dados">🔄</button>
+            <button class="btn-icon" onclick="toggleFullscreen()" title="Tela cheia">⛶</button>
+            <a href="/logout" class="btn-logout">Sair</a>
+        </div>
+    </header>
 
-<div class="grid-cards">
+    <!-- CARDS DE MÉTRICAS -->
+    <section class="metrics-grid">
+        <div class="metric-card gradient-blue">
+            <div class="metric-icon">👥</div>
+            <div class="metric-content">
+                <span class="metric-value" id="total-members">12.847</span>
+                <span class="metric-label">Total de Membros</span>
+                <span class="metric-change positive">+12,5% ↑</span>
+            </div>
+        </div>
+        
+        <div class="metric-card gradient-green">
+            <div class="metric-icon">💰</div>
+            <div class="metric-content">
+                <span class="metric-value" id="revenue">R$ 847.293</span>
+                <span class="metric-label">Faturamento Mensal</span>
+                <span class="metric-change positive">+8,3% ↑</span>
+            </div>
+        </div>
+        
+        <div class="metric-card gradient-purple">
+            <div class="metric-icon">🏢</div>
+            <div class="metric-content">
+                <span class="metric-value" id="companies">342</span>
+                <span class="metric-label">Empresas Parceiras</span>
+                <span class="metric-change positive">+5,2% ↑</span>
+            </div>
+        </div>
+        
+        <div class="metric-card gradient-orange">
+            <div class="metric-icon">💸</div>
+            <div class="metric-content">
+                <span class="metric-value" id="cashback">R$ 125.430</span>
+                <span class="metric-label">Cashback Distribuído</span>
+                <span class="metric-change positive">+15,7% ↑</span>
+            </div>
+        </div>
+    </section>
 
-    <div class="kpi-card zoom">
-        <h3>Membros Totais</h3>
-        <p class="kpi-number" id="kpi-members">…</p>
-    </div>
+    <!-- GRÁFICOS PRINCIPAIS -->
+    <section class="charts-section">
+        <div class="chart-container large">
+            <div class="chart-header">
+                <h3>📈 Crescimento de Membros</h3>
+                <div class="chart-controls">
+                    <select id="period-select" onchange="updateChart()">
+                        <option value="7d">Últimos 7 dias</option>
+                        <option value="30d" selected>Últimos 30 dias</option>
+                        <option value="90d">Últimos 90 dias</option>
+                        <option value="1y">Último ano</option>
+                    </select>
+                    <button class="btn-export" onclick="exportChart('growth')">📥 Exportar</button>
+                </div>
+            </div>
+            <div id="growth-chart" class="chart-area"></div>
+        </div>
+        
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3>🍕 Distribuição por Categoria</h3>
+                <button class="btn-export" onclick="exportChart('pie')">📥</button>
+            </div>
+            <div id="pie-chart" class="chart-area"></div>
+        </div>
+        
+        <div class="chart-container">
+            <div class="chart-header">
+                <h3>📊 Faturamento por Região</h3>
+                <button class="btn-export" onclick="exportChart('bar')">📥</button>
+            </div>
+            <div id="bar-chart" class="chart-area"></div>
+        </div>
+    </section>
 
-    <div class="kpi-card zoom">
-        <h3>Cashback Distribuído</h3>
-        <p class="kpi-number" id="kpi-cashback">…</p>
-    </div>
+    <!-- AÇÕES RÁPIDAS -->
+    <section class="quick-actions">
+        <h3>⚡ Ações Rápidas</h3>
+        <div class="actions-grid">
+            <a href="/upload" class="action-card">
+                <span class="action-icon">📤</span>
+                <span class="action-title">Upload de Dados</span>
+                <span class="action-desc">Importe arquivos Excel, CSV ou JSON</span>
+            </a>
+            
+            <a href="/python-editor" class="action-card">
+                <span class="action-icon">🐍</span>
+                <span class="action-title">Editor Python</span>
+                <span class="action-desc">Análise com código</span>
+            </a>
+            
+            <a href="/exports" class="action-card">
+                <span class="action-icon">📥</span>
+                <span class="action-title">Exportações</span>
+                <span class="action-desc">Power BI, Excel ou PDF</span>
+            </a>
+            
+            <a href="/documentation" class="action-card">
+                <span class="action-icon">📚</span>
+                <span class="action-title">Documentação</span>
+                <span class="action-desc">Gerar relatório para o cliente</span>
+            </a>
+            
+            <a href="/github-sync" class="action-card">
+                <span class="action-icon">🔗</span>
+                <span class="action-title">GitHub</span>
+                <span class="action-desc">Sincronizar repositório</span>
+            </a>
+            
+            <a href="/predict" class="action-card">
+                <span class="action-icon">🤖</span>
+                <span class="action-title">PREDITIVI.A</span>
+                <span class="action-desc">IA para previsões</span>
+            </a>
+        </div>
+    </section>
 
-    <div class="kpi-card zoom">
-        <h3>Parceiros Ativos</h3>
-        <p class="kpi-number" id="kpi-partners">…</p>
-    </div>
-
-    <div class="kpi-card zoom">
-        <h3>Faturamento Total</h3>
-        <p class="kpi-number" id="kpi-revenue">…</p>
-    </div>
+    <!-- TABELA DE DADOS RECENTES -->
+    <section class="data-table-section">
+        <div class="table-header">
+            <h3>📋 Dados Recentes</h3>
+            <div class="table-controls">
+                <input type="search" placeholder="Pesquisar..." class="search-input" id="table-search">
+                <button class="btn-primary" onclick="exportTableData()">📥 Exportar Tabela</button>
+            </div>
+        </div>
+        <div class="table-wrapper">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>Categoria</th>
+                        <th>Valor</th>
+                        <th>Status</th>
+                        <th>Data</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody id="data-table-body">
+                    <tr>
+                        <td>#001</td>
+                        <td>Cliente Premium A</td>
+                        <td><span class="badge blue">Varejo</span></td>
+                        <td class="value-positive">R$ 15.420</td>
+                        <td><span class="status-badge active">Ativo</span></td>
+                        <td>05/12/2025</td>
+                        <td>
+                            <button class="btn-icon-sm" title="Ver detalhes">👁️</button>
+                            <button class="btn-icon-sm" title="Editar">✏️</button>
+                            <button class="btn-icon-sm" title="Exportar">📥</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>#002</td>
+                        <td>Empresa XYZ Ltda</td>
+                        <td><span class="badge green">Serviços</span></td>
+                        <td class="value-positive">R$ 28.750</td>
+                        <td><span class="status-badge active">Ativo</span></td>
+                        <td>04/12/2025</td>
+                        <td>
+                            <button class="btn-icon-sm" title="Ver detalhes">👁️</button>
+                            <button class="btn-icon-sm" title="Editar">✏️</button>
+                            <button class="btn-icon-sm" title="Exportar">📥</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>#003</td>
+                        <td>Tech Solutions</td>
+                        <td><span class="badge purple">Tecnologia</span></td>
+                        <td class="value-positive">R$ 45.200</td>
+                        <td><span class="status-badge pending">Pendente</span></td>
+                        <td>03/12/2025</td>
+                        <td>
+                            <button class="btn-icon-sm" title="Ver detalhes">👁️</button>
+                            <button class="btn-icon-sm" title="Editar">✏️</button>
+                            <button class="btn-icon-sm" title="Exportar">📥</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 
 </div>
 
-<section class="charts-grid">
+<!-- PLOTLY JS -->
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
 
-    <iframe src="/chart?table=membros&x=data&y=total" class="chart-frame"></iframe>
-    <iframe src="/chart?table=cashback&x=data&y=valor" class="chart-frame"></iframe>
-    <iframe src="/chart?table=faturamento&x=mes&y=valor" class="chart-frame"></iframe>
-    <iframe src="/chart?table=rede&x=nivel&y=total" class="chart-frame"></iframe>
+<script>
+// Atualizar data/hora
+document.getElementById('last-update').textContent = new Date().toLocaleString('pt-BR');
 
-</section>
+// Gráfico de Crescimento
+const growthData = [{
+    x: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
+    y: [8500, 9200, 9800, 10200, 10800, 11200, 11500, 11900, 12100, 12400, 12600, 12847],
+    type: 'scatter',
+    mode: 'lines+markers',
+    fill: 'tozeroy',
+    fillcolor: 'rgba(0, 212, 255, 0.1)',
+    line: { color: '#00d4ff', width: 3 },
+    marker: { size: 8, color: '#00d4ff' }
+}];
 
+const growthLayout = {
+    paper_bgcolor: 'transparent',
+    plot_bgcolor: 'transparent',
+    font: { color: '#e0e0e0' },
+    margin: { l: 50, r: 30, t: 20, b: 40 },
+    xaxis: { gridcolor: 'rgba(255,255,255,0.1)' },
+    yaxis: { gridcolor: 'rgba(255,255,255,0.1)' }
+};
+
+Plotly.newPlot('growth-chart', growthData, growthLayout, { responsive: true });
+
+// Gráfico de Pizza
+const pieData = [{
+    values: [35, 25, 20, 15, 5],
+    labels: ['Varejo', 'Serviços', 'Tecnologia', 'Indústria', 'Outros'],
+    type: 'pie',
+    hole: 0.5,
+    marker: {
+        colors: ['#00d4ff', '#7c3aed', '#10b981', '#f59e0b', '#ef4444']
+    },
+    textinfo: 'label+percent'
+}];
+
+const pieLayout = {
+    paper_bgcolor: 'transparent',
+    font: { color: '#e0e0e0' },
+    margin: { l: 20, r: 20, t: 20, b: 20 },
+    showlegend: false
+};
+
+Plotly.newPlot('pie-chart', pieData, pieLayout, { responsive: true });
+
+// Gráfico de Barras
+const barData = [{
+    x: ['Sul', 'Sudeste', 'Centro-Oeste', 'Nordeste', 'Norte'],
+    y: [285000, 420000, 180000, 95000, 42000],
+    type: 'bar',
+    marker: {
+        color: ['#00d4ff', '#7c3aed', '#10b981', '#f59e0b', '#ef4444'],
+        opacity: 0.9
+    }
+}];
+
+const barLayout = {
+    paper_bgcolor: 'transparent',
+    plot_bgcolor: 'transparent',
+    font: { color: '#e0e0e0' },
+    margin: { l: 60, r: 30, t: 20, b: 40 },
+    xaxis: { gridcolor: 'rgba(255,255,255,0.1)' },
+    yaxis: { gridcolor: 'rgba(255,255,255,0.1)' }
+};
+
+Plotly.newPlot('bar-chart', barData, barLayout, { responsive: true });
+
+// Funções auxiliares
+function refreshData() {
+    document.getElementById('last-update').textContent = new Date().toLocaleString('pt-BR');
+    showNotification('Dados atualizados com sucesso!', 'success');
+}
+
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen();
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+function exportChart(chartType) {
+    showNotification(`Exportando gráfico ${chartType}...`, 'info');
+}
+
+function exportTableData() {
+    showNotification('Exportando dados da tabela...', 'info');
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
+
+// Busca na tabela
+document.getElementById('table-search').addEventListener('input', function(e) {
+    const searchTerm = e.target.value.toLowerCase();
+    const rows = document.querySelectorAll('#data-table-body tr');
+    rows.forEach(row => {
+        const text = row.textContent.toLowerCase();
+        row.style.display = text.includes(searchTerm) ? '' : 'none';
+    });
+});
+</script>
 {% endblock %}

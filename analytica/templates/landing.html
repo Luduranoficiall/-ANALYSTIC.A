@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANALYSTIC.A — A Revolução em Business Intelligence</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #667eea;
+            --secondary: #764ba2;
+            --accent: #f093fb;
+            --neon-blue: #00d4ff;
+            --neon-purple: #b24bf3;
+            --neon-pink: #ff6b9d;
+            --neon-green: #00d4aa;
+            --dark: #0a0a0f;
+            --darker: #050508;
+            --card: #12121a;
+            --glass: rgba(255,255,255,0.03);
+            --text: #ffffff;
+            --text-muted: #6b7280;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html {
+            scroll-behavior: smooth;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--darker);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+        
+        /* ===== NAVBAR ===== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+            padding: 20px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(5,5,8,0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: all 0.3s;
+        }
+        
+        .navbar.scrolled {
+            padding: 15px 60px;
+            background: rgba(5,5,8,0.95);
+        }
+        
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .nav-logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+        
+        .nav-logo-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 22px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #fff, var(--neon-blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 40px;
+        }
+        
+        .nav-link {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .nav-link:hover {
+            color: var(--text);
+        }
+        
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            transition: width 0.3s;
+        }
+        
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        
+        .nav-buttons {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .btn-login {
+            padding: 12px 28px;
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 10px;
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .btn-login:hover {
+            border-color: var(--primary);
+            background: rgba(102,126,234,0.1);
+        }
+        
+        .btn-start {
+            padding: 12px 28px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .btn-start:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102,126,234,0.4);
+        }
+        
+        /* ===== HERO SECTION ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            padding: 120px 60px 60px;
+            overflow: hidden;
+        }
+        
+        /* Animated Background */
+        .hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        
+        .hero-bg .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(100px);
+            animation: orbFloat 20s infinite ease-in-out;
+        }
+        
+        .hero-bg .orb-1 {
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(102,126,234,0.3) 0%, transparent 70%);
+            top: -300px;
+            left: -200px;
+        }
+        
+        .hero-bg .orb-2 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(240,147,251,0.25) 0%, transparent 70%);
+            bottom: -200px;
+            right: -100px;
+            animation-delay: -7s;
+        }
+        
+        .hero-bg .orb-3 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0,212,255,0.2) 0%, transparent 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-delay: -14s;
+        }
+        
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -30px) scale(1.05); }
+            66% { transform: translate(-20px, 20px) scale(0.95); }
+        }
+        
+        /* Grid */
+        .hero-grid {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background-image: 
+                linear-gradient(rgba(102,126,234,0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(102,126,234,0.02) 1px, transparent 1px);
+            background-size: 60px 60px;
+            transform: perspective(500px) rotateX(60deg);
+            animation: gridScroll 30s linear infinite;
+        }
+        
+        @keyframes gridScroll {
+            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+            100% { transform: perspective(500px) rotateX(60deg) translateY(60px); }
+        }
+        
+        /* Particles */
+        .particles-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--neon-blue);
+            border-radius: 50%;
+            box-shadow: 0 0 10px currentColor;
+            animation: particleRise 20s linear infinite;
+        }
+        
+        @keyframes particleRise {
+            0% { transform: translateY(100vh) scale(0); opacity: 0; }
+            10% { opacity: 1; transform: scale(1); }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100vh) scale(0); opacity: 0; }
+        }
+        
+        .hero-content {
+            position: relative;
+            z-index: 10;
+            text-align: center;
+            max-width: 1000px;
+        }
+        
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 25px;
+            background: rgba(102,126,234,0.1);
+            border: 1px solid rgba(102,126,234,0.3);
+            border-radius: 50px;
+            font-size: 14px;
+            color: var(--neon-blue);
+            margin-bottom: 30px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(102,126,234,0.4); }
+            50% { box-shadow: 0 0 0 15px rgba(102,126,234,0); }
+        }
+        
+        .hero-badge i {
+            animation: sparkle 1.5s infinite;
+        }
+        
+        @keyframes sparkle {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.2); }
+        }
+        
+        .hero-title {
+            font-size: 80px;
+            font-weight: 900;
+            line-height: 1.05;
+            margin-bottom: 30px;
+            letter-spacing: -2px;
+        }
+        
+        .hero-title .gradient {
+            background: linear-gradient(135deg, var(--neon-blue), var(--accent), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: gradientShift 5s infinite;
+            background-size: 200% 200%;
+        }
+        
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        
+        .hero-subtitle {
+            font-size: 22px;
+            color: var(--text-muted);
+            line-height: 1.7;
+            margin-bottom: 50px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 80px;
+        }
+        
+        .btn-hero-primary {
+            padding: 20px 50px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            border-radius: 15px;
+            color: white;
+            font-size: 18px;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+            text-decoration: none;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-hero-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: shimmer 3s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { left: -100%; }
+            100% { left: 100%; }
+        }
+        
+        .btn-hero-primary:hover {
+            transform: translateY(-5px) scale(1.02);
+            box-shadow: 0 20px 60px rgba(102,126,234,0.5);
+        }
+        
+        .btn-hero-secondary {
+            padding: 20px 50px;
+            background: rgba(255,255,255,0.03);
+            border: 2px solid rgba(255,255,255,0.1);
+            border-radius: 15px;
+            color: white;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+        
+        .btn-hero-secondary:hover {
+            background: rgba(255,255,255,0.08);
+            border-color: var(--primary);
+            transform: translateY(-5px);
+        }
+        
+        /* Stats */
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 80px;
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 48px;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--neon-blue), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        /* ===== FEATURES SECTION ===== */
+        .features {
+            padding: 150px 60px;
+            position: relative;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 80px;
+        }
+        
+        .section-badge {
+            display: inline-block;
+            padding: 8px 20px;
+            background: rgba(0,212,170,0.1);
+            border: 1px solid rgba(0,212,170,0.3);
+            border-radius: 50px;
+            color: var(--neon-green);
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        
+        .section-title {
+            font-size: 52px;
+            font-weight: 800;
+            margin-bottom: 20px;
+        }
+        
+        .section-subtitle {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .feature-card {
+            background: rgba(18,18,26,0.6);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 24px;
+            padding: 40px;
+            transition: all 0.4s;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-10px);
+            border-color: rgba(102,126,234,0.3);
+            box-shadow: 0 30px 80px rgba(0,0,0,0.4);
+        }
+        
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+        
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 25px;
+            box-shadow: 0 10px 30px rgba(102,126,234,0.3);
+        }
+        
+        .feature-card:nth-child(2) .feature-icon {
+            background: linear-gradient(135deg, var(--accent), var(--neon-pink));
+        }
+        
+        .feature-card:nth-child(3) .feature-icon {
+            background: linear-gradient(135deg, var(--neon-blue), var(--primary));
+        }
+        
+        .feature-card:nth-child(4) .feature-icon {
+            background: linear-gradient(135deg, var(--neon-green), #38f9d7);
+        }
+        
+        .feature-card:nth-child(5) .feature-icon {
+            background: linear-gradient(135deg, #ffc107, #ff6b35);
+        }
+        
+        .feature-card:nth-child(6) .feature-icon {
+            background: linear-gradient(135deg, var(--neon-purple), var(--neon-pink));
+        }
+        
+        .feature-title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+        
+        .feature-desc {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+        
+        /* ===== SHOWCASE SECTION ===== */
+        .showcase {
+            padding: 150px 60px;
+            background: linear-gradient(180deg, transparent, rgba(102,126,234,0.03), transparent);
+        }
+        
+        .showcase-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .showcase-text h2 {
+            font-size: 48px;
+            font-weight: 800;
+            margin-bottom: 25px;
+            line-height: 1.2;
+        }
+        
+        .showcase-text p {
+            font-size: 18px;
+            color: var(--text-muted);
+            line-height: 1.8;
+            margin-bottom: 40px;
+        }
+        
+        .showcase-features {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .showcase-feature {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .showcase-feature i {
+            width: 30px;
+            height: 30px;
+            background: linear-gradient(135deg, var(--neon-green), #38f9d7);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        .showcase-feature span {
+            font-size: 16px;
+            font-weight: 500;
+        }
+        
+        .showcase-image {
+            position: relative;
+        }
+        
+        .showcase-mockup {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.5);
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .showcase-glow {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            height: 80%;
+            background: radial-gradient(circle, rgba(102,126,234,0.3) 0%, transparent 70%);
+            filter: blur(60px);
+            z-index: -1;
+        }
+        
+        /* ===== PRICING SECTION ===== */
+        .pricing {
+            padding: 150px 60px;
+        }
+        
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .pricing-card {
+            background: rgba(18,18,26,0.8);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 24px;
+            padding: 50px 40px;
+            text-align: center;
+            transition: all 0.4s;
+            position: relative;
+        }
+        
+        .pricing-card.featured {
+            background: linear-gradient(180deg, rgba(102,126,234,0.1), rgba(18,18,26,0.9));
+            border-color: var(--primary);
+            transform: scale(1.05);
+            box-shadow: 0 40px 100px rgba(102,126,234,0.2);
+        }
+        
+        .pricing-card:hover:not(.featured) {
+            transform: translateY(-10px);
+            border-color: rgba(255,255,255,0.2);
+        }
+        
+        .pricing-badge {
+            position: absolute;
+            top: -15px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 8px 25px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 50px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .pricing-name {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+        
+        .pricing-price {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
+        
+        .pricing-price span {
+            font-size: 18px;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+        
+        .pricing-desc {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 30px;
+        }
+        
+        .pricing-features {
+            text-align: left;
+            margin-bottom: 40px;
+        }
+        
+        .pricing-feature {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            font-size: 14px;
+        }
+        
+        .pricing-feature i {
+            color: var(--neon-green);
+        }
+        
+        .btn-pricing {
+            width: 100%;
+            padding: 18px;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: block;
+        }
+        
+        .btn-pricing.primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border: none;
+            color: white;
+        }
+        
+        .btn-pricing.secondary {
+            background: transparent;
+            border: 2px solid rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .btn-pricing:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102,126,234,0.3);
+        }
+        
+        /* ===== TESTIMONIALS ===== */
+        .testimonials {
+            padding: 150px 60px;
+            background: linear-gradient(180deg, transparent, rgba(240,147,251,0.03), transparent);
+        }
+        
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .testimonial-card {
+            background: rgba(18,18,26,0.6);
+            border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 20px;
+            padding: 35px;
+            transition: all 0.3s;
+        }
+        
+        .testimonial-card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(102,126,234,0.3);
+        }
+        
+        .testimonial-stars {
+            color: #ffc107;
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+        
+        .testimonial-text {
+            font-size: 16px;
+            line-height: 1.7;
+            color: var(--text-muted);
+            margin-bottom: 25px;
+        }
+        
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 18px;
+        }
+        
+        .testimonial-info h4 {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .testimonial-info span {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        
+        /* ===== CTA SECTION ===== */
+        .cta {
+            padding: 150px 60px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .cta-bg {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, rgba(102,126,234,0.15) 0%, transparent 70%);
+        }
+        
+        .cta-content {
+            position: relative;
+            z-index: 10;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .cta h2 {
+            font-size: 56px;
+            font-weight: 800;
+            margin-bottom: 25px;
+        }
+        
+        .cta p {
+            font-size: 20px;
+            color: var(--text-muted);
+            margin-bottom: 50px;
+        }
+        
+        .cta-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+        }
+        
+        /* ===== FOOTER ===== */
+        .footer {
+            padding: 80px 60px 40px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr 1fr;
+            gap: 60px;
+            max-width: 1400px;
+            margin: 0 auto 60px;
+        }
+        
+        .footer-brand {
+            max-width: 300px;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .footer-logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .footer-logo-text {
+            font-family: 'Orbitron', sans-serif;
+            font-size: 18px;
+            font-weight: 800;
+        }
+        
+        .footer-brand p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.7;
+            margin-bottom: 25px;
+        }
+        
+        .footer-social {
+            display: flex;
+            gap: 15px;
+        }
+        
+        .footer-social a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            transition: all 0.3s;
+        }
+        
+        .footer-social a:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .footer-column h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+        
+        .footer-column a {
+            display: block;
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            margin-bottom: 15px;
+            transition: color 0.3s;
+        }
+        
+        .footer-column a:hover {
+            color: var(--text);
+        }
+        
+        .footer-bottom {
+            text-align: center;
+            padding-top: 40px;
+            border-top: 1px solid rgba(255,255,255,0.05);
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1200px) {
+            .hero-title { font-size: 56px; }
+            .features-grid, .pricing-grid, .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+            .showcase-content { grid-template-columns: 1fr; text-align: center; }
+            .footer-content { grid-template-columns: repeat(3, 1fr); }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar { padding: 15px 20px; }
+            .nav-links { display: none; }
+            .hero { padding: 100px 20px 60px; }
+            .hero-title { font-size: 36px; }
+            .hero-subtitle { font-size: 16px; }
+            .hero-buttons { flex-direction: column; }
+            .hero-stats { flex-direction: column; gap: 30px; }
+            .features-grid, .pricing-grid, .testimonials-grid { grid-template-columns: 1fr; }
+            .pricing-card.featured { transform: none; }
+            .section-title { font-size: 36px; }
+            .footer-content { grid-template-columns: 1fr; }
+            .cta h2 { font-size: 36px; }
+            .cta-buttons { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-logo">
+            <div class="nav-logo-icon">📊</div>
+            <span class="nav-logo-text">ANALYSTIC.A</span>
+        </div>
+        
+        <div class="nav-links">
+            <a href="#features" class="nav-link">Recursos</a>
+            <a href="#pricing" class="nav-link">Preços</a>
+            <a href="#testimonials" class="nav-link">Depoimentos</a>
+            <a href="#" class="nav-link">Documentação</a>
+        </div>
+        
+        <div class="nav-buttons">
+            <a href="/login" class="btn-login">Entrar</a>
+            <a href="/register" class="btn-start">Começar Grátis</a>
+        </div>
+    </nav>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-bg">
+            <div class="orb orb-1"></div>
+            <div class="orb orb-2"></div>
+            <div class="orb orb-3"></div>
+            <div class="hero-grid"></div>
+            <div class="particles-container" id="particles"></div>
+        </div>
+        
+        <div class="hero-content">
+            <div class="hero-badge">
+                <i class="fas fa-rocket"></i>
+                Versão 2.0 — Agora com IA integrada!
+            </div>
+            
+            <h1 class="hero-title">
+                A Revolução em<br>
+                <span class="gradient">Business Intelligence</span>
+            </h1>
+            
+            <p class="hero-subtitle">
+                Transforme seus dados em decisões inteligentes com a plataforma de analytics 
+                mais avançada do mercado. IA integrada, visualizações impactantes e 
+                colaboração em tempo real.
+            </p>
+            
+            <div class="hero-buttons">
+                <a href="/register" class="btn-hero-primary">
+                    <i class="fas fa-play"></i>
+                    Começar Gratuitamente
+                </a>
+                <a href="#features" class="btn-hero-secondary">
+                    <i class="fas fa-info-circle"></i>
+                    Saiba Mais
+                </a>
+            </div>
+            
+            <div class="hero-stats">
+                <div class="stat">
+                    <span class="stat-value">10K+</span>
+                    <span class="stat-label">Usuários Ativos</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">50M+</span>
+                    <span class="stat-label">Dados Processados</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">99.9%</span>
+                    <span class="stat-label">Uptime</span>
+                </div>
+                <div class="stat">
+                    <span class="stat-value">4.9★</span>
+                    <span class="stat-label">Avaliação</span>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="section-header">
+            <span class="section-badge">RECURSOS</span>
+            <h2 class="section-title">Tudo o que você precisa<br>em uma única plataforma</h2>
+            <p class="section-subtitle">
+                Ferramentas poderosas para transformar dados brutos em insights acionáveis.
+            </p>
+        </div>
+        
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-robot"></i></div>
+                <h3 class="feature-title">IA Integrada</h3>
+                <p class="feature-desc">
+                    Ollama + Gemini 1.5 Flash para análises preditivas, insights automáticos 
+                    e respostas inteligentes sobre seus dados.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-chart-pie"></i></div>
+                <h3 class="feature-title">Dashboards Dinâmicos</h3>
+                <p class="feature-desc">
+                    Crie visualizações interativas com drag & drop. Gráficos, KPIs e 
+                    relatórios que impressionam.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-project-diagram"></i></div>
+                <h3 class="feature-title">Modelagem de Dados</h3>
+                <p class="feature-desc">
+                    Relacionamentos visuais, medidas DAX e modelo semântico no estilo Power BI. 
+                    Sem necessidade de código.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-users"></i></div>
+                <h3 class="feature-title">Colaboração em Tempo Real</h3>
+                <p class="feature-desc">
+                    Workspaces compartilhados, permissões granulares e publicação instantânea 
+                    de relatórios.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-code"></i></div>
+                <h3 class="feature-title">Python Nativo</h3>
+                <p class="feature-desc">
+                    Execute scripts Python diretamente na plataforma. Integração com o GitHub 
+                    para versionamento de código.
+                </p>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon"><i class="fas fa-shield-alt"></i></div>
+                <h3 class="feature-title">Segurança Empresarial</h3>
+                <p class="feature-desc">
+                    Criptografia de ponta a ponta, autenticação 2FA e conformidade com a LGPD. 
+                    Seus dados sempre protegidos.
+                </p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Showcase Section -->
+    <section class="showcase">
+        <div class="showcase-content">
+            <div class="showcase-text">
+                <h2>Uma interface que você vai amar usar todos os dias</h2>
+                <p>
+                    Design moderno e intuitivo, inspirado nas melhores ferramentas do mercado. 
+                    Cada detalhe foi pensado para maximizar sua produtividade e tornar a 
+                    análise de dados uma experiência prazerosa.
+                </p>
+                
+                <div class="showcase-features">
+                    <div class="showcase-feature">
+                        <i class="fas fa-check"></i>
+                        <span>Tema escuro premium ideal para uso prolongado</span>
+                    </div>
+                    <div class="showcase-feature">
+                        <i class="fas fa-check"></i>
+                        <span>Atalhos de teclado para usuários avançados</span>
+                    </div>
+                    <div class="showcase-feature">
+                        <i class="fas fa-check"></i>
+                        <span>Responsivo para qualquer dispositivo</span>
+                    </div>
+                    <div class="showcase-feature">
+                        <i class="fas fa-check"></i>
+                        <span>Exportação para Power BI, Excel e PDF</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="showcase-image">
+                <div class="showcase-glow"></div>
+                <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 800 500'%3E%3Crect fill='%2312121a' width='800' height='500' rx='20'/%3E%3Crect fill='%230a0a0f' x='20' y='60' width='760' height='420' rx='10'/%3E%3Crect fill='%231a1a2e' x='20' y='20' width='760' height='40' rx='10'/%3E%3Ccircle fill='%23ff5f57' cx='45' cy='40' r='7'/%3E%3Ccircle fill='%23febc2e' cx='70' cy='40' r='7'/%3E%3Ccircle fill='%2328c840' cx='95' cy='40' r='7'/%3E%3Crect fill='%23667eea' x='40' y='80' width='200' height='120' rx='10' opacity='0.3'/%3E%3Crect fill='%23f093fb' x='260' y='80' width='200' height='120' rx='10' opacity='0.3'/%3E%3Crect fill='%2300d4ff' x='480' y='80' width='280' height='120' rx='10' opacity='0.3'/%3E%3Crect fill='%23667eea' x='40' y='220' width='720' height='240' rx='10' opacity='0.2'/%3E%3C/svg%3E" alt="Dashboard Preview" class="showcase-mockup">
+            </div>
+        </div>
+    </section>
+    
+    <!-- Pricing Section -->
+    <section class="pricing" id="pricing">
+        <div class="section-header">
+            <span class="section-badge">PREÇOS</span>
+            <h2 class="section-title">Planos para todos os tamanhos</h2>
+            <p class="section-subtitle">
+                Comece grátis e escale conforme o seu crescimento.
+            </p>
+        </div>
+        
+        <div class="pricing-grid">
+            <div class="pricing-card">
+                <h3 class="pricing-name">Starter</h3>
+                <div class="pricing-price">R$ 0<span>/mês</span></div>
+                <p class="pricing-desc">Para começar a explorar.</p>
+                
+                <div class="pricing-features">
+                    <div class="pricing-feature">
+                        <i class="fas fa-check"></i>
+                        <span>Até 3 dashboards</span>
+                    </div>
+                    <div class="pricing-feature">
+                        <i class="fas fa-check"></i>
+                        <span>1 GB de armazenamento</span>
+                    </div>
+                    <div class="pricing-feature">
+                        <i class="fas fa-check"></i>
+                        <span>IA básica (Ollama local)</span>
+                    </div>
+                    <div class="pricing-feature">
+                        <i class="fas fa-check"></i>
+                        <span>Suporte por e-mail</span>
+                    </div>
+                </div>
+                
+                <a href="/register" class="btn-pricing secondary">Começar Grátis</a>
+            </div>
+            
+            <div class="pricing-card featured">
+                <span class="pricing-badge">Mais Popular</span>
+                <h3 class="pricing-name">Professional</h3>
+                <div class="pricing-price">R$ 97<span>/mês</span></div>
+                <p class="pricing-desc">Para profissionais e equipes.</p>
+                
+                <div class="pricing-features">
+                    <div class="pricing-feature">
+                        <i class="fas fa-check"></i>
+                        <span>Dashboards ilimitados</span>
+                    </div>
+                    <div class="pricing-feature">
+                        <i class="fas fa-check"></i>
+                        <span>50 GB de armazenamento</span>
+                    </div>
+                    <div class="pricing-feature">
+                        <i class="fas fa-check"></i>
+                        <span>IA avançada (Gemini 1.5)</span>
+                    </div>
+                    <div class="pricing-feature">
+                        <i class="fas fa-check"></i>
+                        <span>5 usuários incluídos</span>
+                    </div>
+                    <div class="pricing-feature">
+                        <i class="fas fa-check"></i>
+                        <span>Suporte prioritário</span>
+                    </div>
+                </div>
+                
+                <a href="/register" class="btn-pricing primary">Assinar Agora</a>
+            </div>
+            
+            <div class="pricing-card">
+                <h3 class="pricing-name">Enterprise</h3>
+                <div class="pricing-price">Sob Consulta</div>
+                <p class="pricing-desc">Para grandes organizações.</p>
+                
+                <div class="pricing-features">
+                    <div class="pricing-feature">
+                        <i class="fas fa-check"></i>
+                        <span>Tudo do Professional</span>
+                    </div>
+                    <div class="pricing-feature">
+                        <i class="fas fa-check"></i>
+                        <span>Armazenamento ilimitado</span>
+                    </div>
+                    <div class="pricing-feature">
+                        <i class="fas fa-check"></i>
+                        <span>Usuários ilimitados</span>
+                    </div>
+                    <div class="pricing-feature">
+                        <i class="fas fa-check"></i>
+                        <span>SLA dedicado</span>
+                    </div>
+                    <div class="pricing-feature">
+                        <i class="fas fa-check"></i>
+                        <span>Implantação on-premise</span>
+                    </div>
+                </div>
+                
+                <a href="#" class="btn-pricing secondary">Falar com Vendas</a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <div class="section-header">
+            <span class="section-badge">DEPOIMENTOS</span>
+            <h2 class="section-title">O que nossos clientes dizem</h2>
+            <p class="section-subtitle">
+                Milhares de empresas já transformaram seus dados com o ANALYSTIC.A.
+            </p>
+        </div>
+        
+        <div class="testimonials-grid">
+            <div class="testimonial-card">
+                <div class="testimonial-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="testimonial-text">
+                    "Finalmente, uma alternativa ao Power BI que não pesa no bolso e 
+                    entrega resultados incríveis. A IA integrada é um diferencial absurdo!"
+                </p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">MR</div>
+                    <div class="testimonial-info">
+                        <h4>Marcos Ribeiro</h4>
+                        <span>CEO, TechFlow Brasil</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="testimonial-text">
+                    "Migrei do Power BI para o ANALYSTIC.A e não me arrependo. 
+                    A curva de aprendizado é mínima e os dashboards ficam incríveis."
+                </p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">AS</div>
+                    <div class="testimonial-info">
+                        <h4>Ana Santos</h4>
+                        <span>Head de BI, Varejo Plus</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="testimonial-card">
+                <div class="testimonial-stars">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                </div>
+                <p class="testimonial-text">
+                    "O suporte a Python nativo mudou nosso fluxo de trabalho. 
+                    Agora conseguimos fazer análises complexas direto na plataforma."
+                </p>
+                <div class="testimonial-author">
+                    <div class="testimonial-avatar">LC</div>
+                    <div class="testimonial-info">
+                        <h4>Lucas Costa</h4>
+                        <span>Data Scientist, StartupXYZ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="cta-bg"></div>
+        <div class="cta-content">
+            <h2>Pronto para revolucionar<br>sua análise de dados?</h2>
+            <p>
+                Junte-se a milhares de empresas que já descobriram o poder do ANALYSTIC.A. 
+                Comece gratuitamente hoje mesmo!
+            </p>
+            
+            <div class="cta-buttons">
+                <a href="/register" class="btn-hero-primary">
+                    <i class="fas fa-rocket"></i>
+                    Criar Conta Grátis
+                </a>
+                <a href="/login" class="btn-hero-secondary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Já tenho conta
+                </a>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="footer-logo">
+                    <div class="footer-logo-icon">📊</div>
+                    <span class="footer-logo-text">ANALYSTIC.A</span>
+                </div>
+                <p>
+                    A plataforma de Business Intelligence mais avançada do Brasil. 
+                    Transforme seus dados em decisões inteligentes.
+                </p>
+                <div class="footer-social">
+                    <a href="#"><i class="fab fa-linkedin"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-github"></i></a>
+                    <a href="#"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Produto</h4>
+                <a href="#features">Recursos</a>
+                <a href="#pricing">Preços</a>
+                <a href="#">Integrações</a>
+                <a href="#">Roadmap</a>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Recursos</h4>
+                <a href="#">Documentação</a>
+                <a href="#">API</a>
+                <a href="#">Tutoriais</a>
+                <a href="#">Blog</a>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Empresa</h4>
+                <a href="#">Sobre nós</a>
+                <a href="#">Carreiras</a>
+                <a href="#">Contato</a>
+                <a href="#">Parceiros</a>
+            </div>
+            
+            <div class="footer-column">
+                <h4>Legal</h4>
+                <a href="#">Termos de Uso</a>
+                <a href="#">Privacidade</a>
+                <a href="#">LGPD</a>
+                <a href="#">Cookies</a>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>© 2025 ANALYSTIC.A. Todos os direitos reservados. Feito com ❤️ no Brasil.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', () => {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+        
+        // Create particles
+        function createParticles() {
+            const container = document.getElementById('particles');
+            const colors = ['#00d4ff', '#667eea', '#f093fb', '#ff6b9d', '#00d4aa'];
+            
+            for (let i = 0; i < 40; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 20 + 's';
+                particle.style.animationDuration = (Math.random() * 15 + 15) + 's';
+                
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.background = color;
+                particle.style.boxShadow = `0 0 10px ${color}, 0 0 20px ${color}`;
+                
+                container.appendChild(particle);
+            }
+        }
+        
+        createParticles();
+        
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+        
+        // Animate stats on scroll
+        const observerOptions = {
+            threshold: 0.5
+        };
+        
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animation = 'fadeInUp 0.6s ease forwards';
+                }
+            });
+        }, observerOptions);
+        
+        document.querySelectorAll('.feature-card, .pricing-card, .testimonial-card').forEach(el => {
+            el.style.opacity = '0';
+            el.style.transform = 'translateY(30px)';
+            observer.observe(el);
+        });
+        
+        // Add animation keyframes
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes fadeInUp {
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>

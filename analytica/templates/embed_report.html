@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Embed - ANALYSTIC.A</title>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        :root {
+            --dark-bg: #0a0a0f;
+            --card-bg: #12121a;
+            --border-color: #2a2a3a;
+            --text-primary: #ffffff;
+            --text-secondary: #8b8b9a;
+            --accent-color: #667eea;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            padding: 20px;
+        }
+        
+        .embed-container {
+            max-width: 100%;
+        }
+        
+        /* KPIs compactos */
+        .kpi-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .kpi-mini {
+            flex: 1;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
+        }
+        
+        .kpi-mini-label {
+            color: var(--text-secondary);
+            font-size: 11px;
+            margin-bottom: 5px;
+        }
+        
+        .kpi-mini-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+        
+        .kpi-mini-change {
+            font-size: 10px;
+            margin-top: 5px;
+        }
+        
+        .kpi-mini-change.positive {
+            color: #00d4aa;
+        }
+        
+        .kpi-mini-change.negative {
+            color: #ff4757;
+        }
+        
+        /* Chart */
+        .chart-embed {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 15px;
+        }
+        
+        .chart-embed-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+        }
+        
+        .chart-embed-container {
+            height: 300px;
+        }
+        
+        /* Watermark */
+        .embed-watermark {
+            text-align: right;
+            padding-top: 15px;
+            font-size: 10px;
+            color: var(--text-secondary);
+        }
+        
+        .embed-watermark a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="embed-container">
+        <!-- KPIs -->
+        <div class="kpi-row">
+            <div class="kpi-mini">
+                <div class="kpi-mini-label">Receita</div>
+                <div class="kpi-mini-value">R$ 1.2M</div>
+                <div class="kpi-mini-change positive">▲ 15%</div>
+            </div>
+            <div class="kpi-mini">
+                <div class="kpi-mini-label">Vendas</div>
+                <div class="kpi-mini-value">3.8K</div>
+                <div class="kpi-mini-change positive">▲ 8%</div>
+            </div>
+            <div class="kpi-mini">
+                <div class="kpi-mini-label">Ticket</div>
+                <div class="kpi-mini-value">R$ 312</div>
+                <div class="kpi-mini-change positive">▲ 5%</div>
+            </div>
+            <div class="kpi-mini">
+                <div class="kpi-mini-label">Conv.</div>
+                <div class="kpi-mini-value">4.2%</div>
+                <div class="kpi-mini-change negative">▼ 0.5%</div>
+            </div>
+        </div>
+        
+        <!-- Chart -->
+        <div class="chart-embed">
+            <div class="chart-embed-title">Evolução de Vendas</div>
+            <div class="chart-embed-container" id="embedChart"></div>
+        </div>
+        
+        <div class="embed-watermark">
+            Powered by <a href="/" target="_blank">ANALYSTIC.A</a>
+        </div>
+    </div>
+    
+    <script>
+        const data = [{
+            x: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+            y: [150000, 180000, 165000, 210000, 195000, 240000],
+            type: 'scatter',
+            mode: 'lines+markers',
+            fill: 'tozeroy',
+            line: {color: '#667eea', width: 2},
+            marker: {size: 6, color: '#667eea'}
+        }];
+        
+        const layout = {
+            paper_bgcolor: 'transparent',
+            plot_bgcolor: 'transparent',
+            font: {color: '#8b8b9a', size: 10},
+            margin: {l: 40, r: 10, t: 10, b: 30},
+            xaxis: {gridcolor: '#2a2a3a'},
+            yaxis: {gridcolor: '#2a2a3a'}
+        };
+        
+        Plotly.newPlot('embedChart', data, layout, {displayModeBar: false, responsive: true});
+    </script>
+</body>
+</html>

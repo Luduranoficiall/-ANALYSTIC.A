@@ -1,10 +1,21 @@
-def generate_insights(question):
-    from gpt.local_engine import local_llm
-    from gpt.cloud_engine import cloud_llm
-    try:
-        local = local_llm(question)
-        if local and len(local) > 30:
-            return local + "\n\n(gerado pela IA local)"
-    except:
-        pass
-    return cloud_llm(question) + "\n\n(gerado pela OpenAI)"
+# ============================================
+# ANALYSTIC.A — GPT ENGINE
+# Usa Ollama (local) + Gemini (cloud) GRÁTIS!
+# ============================================
+
+from gpt.ai_engine import (
+    generate_insights as ai_generate_insights,
+    ollama_generate_sync,
+    gemini_generate_sync,
+    generate_ai_response,
+    analyze_data,
+    predict_trend,
+    ai_chat
+)
+
+def generate_insights(question: str) -> str:
+    """
+    Gera insights usando IA gratuita.
+    Prioridade: Ollama (local) → Gemini (cloud)
+    """
+    return ai_generate_insights(question)

@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Relatório Compartilhado - ANALYSTIC.A</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        :root {
+            --dark-bg: #0a0a0f;
+            --card-bg: #12121a;
+            --border-color: #2a2a3a;
+            --text-primary: #ffffff;
+            --text-secondary: #8b8b9a;
+            --accent-color: #667eea;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        /* Header */
+        .shared-header {
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .shared-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .shared-logo i {
+            font-size: 24px;
+            background: linear-gradient(135deg, var(--accent-color), #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .shared-logo span {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-color), #f093fb);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .shared-info {
+            text-align: right;
+        }
+        
+        .shared-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .shared-meta {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+        
+        .shared-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .action-btn {
+            background: var(--dark-bg);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        
+        .action-btn:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+        
+        .action-btn.primary {
+            background: linear-gradient(135deg, var(--accent-color), #f093fb);
+            border: none;
+            color: white;
+        }
+        
+        /* Content */
+        .shared-content {
+            padding: 30px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* KPIs */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .kpi-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .kpi-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-color), #f093fb);
+        }
+        
+        .kpi-label {
+            color: var(--text-secondary);
+            font-size: 13px;
+            margin-bottom: 10px;
+        }
+        
+        .kpi-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+        
+        .kpi-change {
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .kpi-change.positive {
+            color: #00d4aa;
+        }
+        
+        .kpi-change.negative {
+            color: #ff4757;
+        }
+        
+        /* Charts */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .chart-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 25px;
+        }
+        
+        .chart-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        
+        .chart-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .chart-container {
+            height: 300px;
+        }
+        
+        /* Table */
+        .data-table {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            overflow: hidden;
+        }
+        
+        .table-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .table-header h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 15px 25px;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        th {
+            background: var(--dark-bg);
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        
+        td {
+            color: var(--text-primary);
+            font-size: 14px;
+        }
+        
+        tr:hover {
+            background: rgba(102,126,234,0.05);
+        }
+        
+        /* Footer */
+        .shared-footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+        
+        .shared-footer a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        
+        /* Password Modal */
+        .password-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .password-modal.active {
+            display: flex;
+        }
+        
+        .password-content {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            width: 400px;
+        }
+        
+        .password-content i {
+            font-size: 50px;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+        
+        .password-content h2 {
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+        
+        .password-content p {
+            color: var(--text-secondary);
+            margin-bottom: 25px;
+        }
+        
+        .password-input {
+            width: 100%;
+            padding: 15px;
+            background: var(--dark-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 16px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .password-submit {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, var(--accent-color), #f093fb);
+            border: none;
+            border-radius: 10px;
+            color: white;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .shared-header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+            
+            .shared-info {
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="shared-header">
+        <div class="shared-logo">
+            <i class="fas fa-chart-line"></i>
+            <span>ANALYSTIC.A</span>
+        </div>
+        
+        <div class="shared-info">
+            <div class="shared-title" id="reportTitle">Dashboard Financeiro Q4</div>
+            <div class="shared-meta">Última atualização: há 2 horas</div>
+        </div>
+        
+        <div class="shared-actions">
+            <button class="action-btn" onclick="window.print()">
+                <i class="fas fa-print"></i> Imprimir
+            </button>
+            <button class="action-btn" onclick="downloadPDF()">
+                <i class="fas fa-download"></i> PDF
+            </button>
+            <button class="action-btn primary" onclick="goToApp()">
+                <i class="fas fa-external-link-alt"></i> Abrir no App
+            </button>
+        </div>
+    </header>
+    
+    <!-- Content -->
+    <main class="shared-content">
+        <!-- KPIs -->
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-label">Receita Total</div>
+                <div class="kpi-value">R$ 1.2M</div>
+                <div class="kpi-change positive">
+                    <i class="fas fa-arrow-up"></i> +15.3% vs mês anterior
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Vendas</div>
+                <div class="kpi-value">3.847</div>
+                <div class="kpi-change positive">
+                    <i class="fas fa-arrow-up"></i> +8.7% vs mês anterior
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Ticket Médio</div>
+                <div class="kpi-value">R$ 312</div>
+                <div class="kpi-change positive">
+                    <i class="fas fa-arrow-up"></i> +5.2% vs mês anterior
+                </div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Conversão</div>
+                <div class="kpi-value">4.2%</div>
+                <div class="kpi-change negative">
+                    <i class="fas fa-arrow-down"></i> -0.5% vs mês anterior
+                </div>
+            </div>
+        </div>
+        
+        <!-- Charts -->
+        <div class="charts-grid">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Evolução de Vendas</div>
+                </div>
+                <div class="chart-container" id="chartLine"></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Vendas por Categoria</div>
+                </div>
+                <div class="chart-container" id="chartPie"></div>
+            </div>
+        </div>
+        
+        <!-- Table -->
+        <div class="data-table">
+            <div class="table-header">
+                <h3>Top Produtos</h3>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Produto</th>
+                        <th>Categoria</th>
+                        <th>Vendas</th>
+                        <th>Receita</th>
+                        <th>Crescimento</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Produto Premium A</td>
+                        <td>Eletrônicos</td>
+                        <td>1,234</td>
+                        <td>R$ 246.800</td>
+                        <td><span style="color: #00d4aa;">+23%</span></td>
+                    </tr>
+                    <tr>
+                        <td>Produto Standard B</td>
+                        <td>Casa</td>
+                        <td>987</td>
+                        <td>R$ 148.050</td>
+                        <td><span style="color: #00d4aa;">+12%</span></td>
+                    </tr>
+                    <tr>
+                        <td>Produto Basic C</td>
+                        <td>Moda</td>
+                        <td>756</td>
+                        <td>R$ 90.720</td>
+                        <td><span style="color: #ff4757;">-5%</span></td>
+                    </tr>
+                    <tr>
+                        <td>Produto Pro D</td>
+                        <td>Eletrônicos</td>
+                        <td>543</td>
+                        <td>R$ 162.900</td>
+                        <td><span style="color: #00d4aa;">+45%</span></td>
+                    </tr>
+                    <tr>
+                        <td>Produto Entry E</td>
+                        <td>Acessórios</td>
+                        <td>432</td>
+                        <td>R$ 43.200</td>
+                        <td><span style="color: #00d4aa;">+8%</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+    
+    <!-- Footer -->
+    <footer class="shared-footer">
+        <p>Relatório gerado por <a href="/">ANALYSTIC.A</a> - Plataforma de Analytics Premium</p>
+        <p>Share ID: {{ share_id }}</p>
+    </footer>
+    
+    <script>
+        // Gráfico de linha
+        const lineData = [{
+            x: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+            y: [150000, 180000, 165000, 210000, 195000, 240000],
+            type: 'scatter',
+            mode: 'lines+markers',
+            fill: 'tozeroy',
+            line: {color: '#667eea', width: 3},
+            marker: {size: 8, color: '#667eea'}
+        }];
+        
+        const lineLayout = {
+            paper_bgcolor: 'transparent',
+            plot_bgcolor: 'transparent',
+            font: {color: '#8b8b9a'},
+            margin: {l: 50, r: 20, t: 20, b: 40},
+            xaxis: {gridcolor: '#2a2a3a'},
+            yaxis: {gridcolor: '#2a2a3a'}
+        };
+        
+        Plotly.newPlot('chartLine', lineData, lineLayout, {displayModeBar: false});
+        
+        // Gráfico de pizza
+        const pieData = [{
+            values: [35, 25, 20, 15, 5],
+            labels: ['Eletrônicos', 'Casa', 'Moda', 'Acessórios', 'Outros'],
+            type: 'pie',
+            hole: 0.5,
+            marker: {colors: ['#667eea', '#f093fb', '#00d4aa', '#ffc107', '#8b8b9a']}
+        }];
+        
+        const pieLayout = {
+            paper_bgcolor: 'transparent',
+            font: {color: '#8b8b9a'},
+            margin: {l: 20, r: 20, t: 20, b: 20},
+            showlegend: true,
+            legend: {orientation: 'h', y: -0.1}
+        };
+        
+        Plotly.newPlot('chartPie', pieData, pieLayout, {displayModeBar: false});
+        
+        function goToApp() {
+            window.location.href = '/login';
+        }
+        
+        function downloadPDF() {
+            window.print();
+        }
+    </script>
+</body>
+</html>

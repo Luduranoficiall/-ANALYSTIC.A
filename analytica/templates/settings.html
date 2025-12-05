@@ -1,0 +1,1351 @@
+{% extends "base.html" %}
+
+{% block title %}Configurações - ANALYSTIC.A{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/powerbi.css">
+<style>
+    .settings-container {
+        display: flex;
+        min-height: calc(100vh - 80px);
+    }
+    
+    /* Sidebar de Navegação */
+    .settings-nav {
+        width: 280px;
+        background: var(--card-bg);
+        border-right: 1px solid var(--border-color);
+        padding: 30px 0;
+    }
+    
+    .nav-header {
+        padding: 0 25px 20px;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 20px;
+    }
+    
+    .nav-header h2 {
+        color: var(--text-primary);
+        font-size: 18px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .nav-header h2 i {
+        background: linear-gradient(135deg, var(--accent-color), #f093fb);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    
+    .nav-section {
+        margin-bottom: 25px;
+    }
+    
+    .nav-section-title {
+        padding: 0 25px;
+        color: var(--text-secondary);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 10px;
+    }
+    
+    .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 25px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: all 0.2s;
+        border-left: 3px solid transparent;
+    }
+    
+    .nav-item:hover {
+        background: var(--dark-bg);
+        color: var(--text-primary);
+    }
+    
+    .nav-item.active {
+        background: rgba(102,126,234,0.1);
+        color: var(--accent-color);
+        border-left-color: var(--accent-color);
+    }
+    
+    .nav-item i {
+        width: 20px;
+        text-align: center;
+    }
+    
+    /* Conteúdo */
+    .settings-content {
+        flex: 1;
+        padding: 40px;
+        overflow-y: auto;
+    }
+    
+    .settings-section {
+        display: none;
+        max-width: 800px;
+    }
+    
+    .settings-section.active {
+        display: block;
+    }
+    
+    .section-title {
+        color: var(--text-primary);
+        font-size: 24px;
+        margin-bottom: 10px;
+    }
+    
+    .section-description {
+        color: var(--text-secondary);
+        font-size: 14px;
+        margin-bottom: 30px;
+    }
+    
+    /* Cards de Configuração */
+    .settings-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        padding: 25px;
+        margin-bottom: 20px;
+    }
+    
+    .settings-card-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 20px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .settings-card-title {
+        color: var(--text-primary);
+        font-size: 16px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .settings-card-title i {
+        color: var(--accent-color);
+    }
+    
+    /* Form Elements */
+    .form-row {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 20px;
+    }
+    
+    .form-group {
+        flex: 1;
+    }
+    
+    .form-group label {
+        display: block;
+        color: var(--text-secondary);
+        font-size: 13px;
+        margin-bottom: 8px;
+    }
+    
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px 15px;
+        background: var(--dark-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-primary);
+        font-size: 14px;
+        transition: border-color 0.2s;
+    }
+    
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+        outline: none;
+        border-color: var(--accent-color);
+    }
+    
+    .form-group textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+    
+    /* Avatar */
+    .avatar-section {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+        margin-bottom: 25px;
+    }
+    
+    .avatar-preview {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: linear-gradient(135deg, var(--accent-color), #f093fb);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 36px;
+        color: white;
+        font-weight: 600;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .avatar-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    
+    .avatar-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .avatar-btn {
+        background: var(--dark-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-primary);
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: all 0.2s;
+    }
+    
+    .avatar-btn:hover {
+        border-color: var(--accent-color);
+    }
+    
+    .avatar-btn.primary {
+        background: var(--accent-color);
+        border-color: var(--accent-color);
+        color: white;
+    }
+    
+    /* Temas */
+    .theme-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+    }
+    
+    .theme-option {
+        background: var(--dark-bg);
+        border: 2px solid var(--border-color);
+        border-radius: 12px;
+        padding: 20px;
+        cursor: pointer;
+        text-align: center;
+        transition: all 0.3s;
+    }
+    
+    .theme-option:hover {
+        border-color: var(--accent-color);
+        transform: translateY(-3px);
+    }
+    
+    .theme-option.active {
+        border-color: var(--accent-color);
+        background: rgba(102,126,234,0.1);
+    }
+    
+    .theme-preview {
+        width: 100%;
+        height: 80px;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .theme-preview.dark {
+        background: linear-gradient(to bottom, #0a0a0f 50%, #1a1a2e 50%);
+    }
+    
+    .theme-preview.light {
+        background: linear-gradient(to bottom, #f8f9fa 50%, #ffffff 50%);
+    }
+    
+    .theme-preview.midnight {
+        background: linear-gradient(to bottom, #1a0a2e 50%, #2d1b4e 50%);
+    }
+    
+    .theme-name {
+        color: var(--text-primary);
+        font-size: 14px;
+        font-weight: 600;
+    }
+    
+    /* Cores de Destaque */
+    .accent-colors {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+    
+    .accent-color {
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: 3px solid transparent;
+        transition: all 0.2s;
+    }
+    
+    .accent-color:hover {
+        transform: scale(1.1);
+    }
+    
+    .accent-color.active {
+        border-color: white;
+        box-shadow: 0 0 20px rgba(255,255,255,0.3);
+    }
+    
+    /* Integrações */
+    .integration-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px;
+        background: var(--dark-bg);
+        border-radius: 12px;
+        margin-bottom: 15px;
+    }
+    
+    .integration-info {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+    
+    .integration-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+    
+    .integration-icon.github {
+        background: #24292e;
+        color: white;
+    }
+    
+    .integration-icon.google {
+        background: #4285f4;
+        color: white;
+    }
+    
+    .integration-icon.slack {
+        background: #4a154b;
+        color: white;
+    }
+    
+    .integration-icon.notion {
+        background: #000;
+        color: white;
+    }
+    
+    .integration-icon.ollama {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+    }
+    
+    .integration-icon.gemini {
+        background: linear-gradient(135deg, #4285f4, #34a853);
+        color: white;
+    }
+    
+    .integration-name {
+        font-size: 15px;
+        font-weight: 600;
+        color: var(--text-primary);
+    }
+    
+    .integration-status {
+        font-size: 12px;
+        color: var(--text-secondary);
+    }
+    
+    .integration-status.connected {
+        color: #00d4aa;
+    }
+    
+    .connect-btn {
+        background: var(--accent-color);
+        border: none;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 13px;
+        transition: all 0.2s;
+    }
+    
+    .connect-btn:hover {
+        background: #5a6fd6;
+    }
+    
+    .connect-btn.connected {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+    }
+    
+    /* Toggle */
+    .toggle-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px 0;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .toggle-row:last-child {
+        border-bottom: none;
+    }
+    
+    .toggle-info h4 {
+        color: var(--text-primary);
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+    
+    .toggle-info p {
+        color: var(--text-secondary);
+        font-size: 12px;
+    }
+    
+    .toggle-switch {
+        position: relative;
+        width: 50px;
+        height: 26px;
+    }
+    
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    
+    .toggle-slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: var(--border-color);
+        border-radius: 26px;
+        transition: 0.3s;
+    }
+    
+    .toggle-slider:before {
+        position: absolute;
+        content: "";
+        height: 20px;
+        width: 20px;
+        left: 3px;
+        bottom: 3px;
+        background: white;
+        border-radius: 50%;
+        transition: 0.3s;
+    }
+    
+    input:checked + .toggle-slider {
+        background: var(--accent-color);
+    }
+    
+    input:checked + .toggle-slider:before {
+        transform: translateX(24px);
+    }
+    
+    /* API Keys */
+    .api-key-row {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+    }
+    
+    .api-key-input {
+        flex: 1;
+        padding: 12px 15px;
+        background: var(--dark-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-primary);
+        font-family: 'Fira Code', monospace;
+        font-size: 12px;
+    }
+    
+    .api-key-btn {
+        background: var(--dark-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 12px 15px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    
+    .api-key-btn:hover {
+        border-color: var(--accent-color);
+        color: var(--accent-color);
+    }
+    
+    /* Botões de Ação */
+    .action-buttons {
+        display: flex;
+        justify-content: flex-end;
+        gap: 15px;
+        margin-top: 30px;
+    }
+    
+    .btn-cancel {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 12px 30px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    
+    .btn-save {
+        background: linear-gradient(135deg, var(--accent-color), #f093fb);
+        border: none;
+        color: white;
+        padding: 12px 35px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+    
+    .btn-save:hover {
+        box-shadow: 0 5px 20px rgba(102,126,234,0.4);
+    }
+    
+    /* Zona de Perigo */
+    .danger-zone {
+        border-color: #ff4757;
+    }
+    
+    .danger-zone .settings-card-title {
+        color: #ff4757;
+    }
+    
+    .danger-zone .settings-card-title i {
+        color: #ff4757;
+    }
+    
+    .danger-btn {
+        background: transparent;
+        border: 1px solid #ff4757;
+        color: #ff4757;
+        padding: 10px 25px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .danger-btn:hover {
+        background: #ff4757;
+        color: white;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="settings-container">
+    <!-- Navegação -->
+    <nav class="settings-nav">
+        <div class="nav-header">
+            <h2><i class="fas fa-cog"></i> Configurações</h2>
+        </div>
+        
+        <div class="nav-section">
+            <div class="nav-section-title">Conta</div>
+            <div class="nav-item active" data-section="profile">
+                <i class="fas fa-user"></i>
+                <span>Perfil</span>
+            </div>
+            <div class="nav-item" data-section="security">
+                <i class="fas fa-shield-alt"></i>
+                <span>Segurança</span>
+            </div>
+        </div>
+        
+        <div class="nav-section">
+            <div class="nav-section-title">Aparência</div>
+            <div class="nav-item" data-section="themes">
+                <i class="fas fa-palette"></i>
+                <span>Temas</span>
+            </div>
+            <div class="nav-item" data-section="display">
+                <i class="fas fa-desktop"></i>
+                <span>Exibição</span>
+            </div>
+        </div>
+        
+        <div class="nav-section">
+            <div class="nav-section-title">Integrações</div>
+            <div class="nav-item" data-section="integrations">
+                <i class="fas fa-plug"></i>
+                <span>Conexões</span>
+            </div>
+            <div class="nav-item" data-section="ai">
+                <i class="fas fa-robot"></i>
+                <span>Inteligência Artificial</span>
+            </div>
+            <div class="nav-item" data-section="api">
+                <i class="fas fa-key"></i>
+                <span>API Keys</span>
+            </div>
+        </div>
+        
+        <div class="nav-section">
+            <div class="nav-section-title">Sistema</div>
+            <div class="nav-item" data-section="notifications">
+                <i class="fas fa-bell"></i>
+                <span>Notificações</span>
+            </div>
+            <div class="nav-item" data-section="data">
+                <i class="fas fa-database"></i>
+                <span>Dados</span>
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Conteúdo -->
+    <main class="settings-content">
+        <!-- Perfil -->
+        <section class="settings-section active" id="section-profile">
+            <h1 class="section-title">Perfil</h1>
+            <p class="section-description">Gerencie suas informações pessoais e preferências de conta.</p>
+            
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <div class="settings-card-title">
+                        <i class="fas fa-user-circle"></i>
+                        Informações Pessoais
+                    </div>
+                </div>
+                
+                <div class="avatar-section">
+                    <div class="avatar-preview" id="avatarPreview">
+                        {{ user.username[0]|upper if user else 'U' }}
+                    </div>
+                    <div class="avatar-actions">
+                        <button class="avatar-btn primary">
+                            <i class="fas fa-upload"></i> Upload Foto
+                        </button>
+                        <button class="avatar-btn">
+                            <i class="fas fa-trash"></i> Remover
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nome Completo</label>
+                        <input type="text" value="{{ user.username if user else '' }}" id="inputName">
+                    </div>
+                    <div class="form-group">
+                        <label>Nome de Usuário</label>
+                        <input type="text" value="{{ user.username if user else '' }}" id="inputUsername">
+                    </div>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" value="{{ user.email if user else '' }}" id="inputEmail">
+                    </div>
+                    <div class="form-group">
+                        <label>Telefone</label>
+                        <input type="tel" placeholder="+55 (11) 99999-9999" id="inputPhone">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Bio</label>
+                    <textarea id="inputBio" placeholder="Conte um pouco sobre você..."></textarea>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn-cancel">Cancelar</button>
+                    <button class="btn-save" onclick="saveProfile()">Salvar Alterações</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Segurança -->
+        <section class="settings-section" id="section-security">
+            <h1 class="section-title">Segurança</h1>
+            <p class="section-description">Gerencie sua senha e configurações de segurança.</p>
+            
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <div class="settings-card-title">
+                        <i class="fas fa-lock"></i>
+                        Alterar Senha
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>Senha Atual</label>
+                    <input type="password" placeholder="••••••••">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Nova Senha</label>
+                        <input type="password" placeholder="••••••••">
+                    </div>
+                    <div class="form-group">
+                        <label>Confirmar Nova Senha</label>
+                        <input type="password" placeholder="••••••••">
+                    </div>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn-save">Atualizar Senha</button>
+                </div>
+            </div>
+            
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <div class="settings-card-title">
+                        <i class="fas fa-mobile-alt"></i>
+                        Autenticação de Dois Fatores
+                    </div>
+                </div>
+                
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <h4>Ativar 2FA</h4>
+                        <p>Adicione uma camada extra de segurança à sua conta</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+            
+            <div class="settings-card danger-zone">
+                <div class="settings-card-header">
+                    <div class="settings-card-title">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        Zona de Perigo
+                    </div>
+                </div>
+                
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <h4>Deletar Conta</h4>
+                        <p>Esta ação é irreversível. Todos os seus dados serão perdidos.</p>
+                    </div>
+                    <button class="danger-btn">Deletar Conta</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Temas -->
+        <section class="settings-section" id="section-themes">
+            <h1 class="section-title">Temas</h1>
+            <p class="section-description">Personalize a aparência da sua interface.</p>
+            
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <div class="settings-card-title">
+                        <i class="fas fa-moon"></i>
+                        Tema da Interface
+                    </div>
+                </div>
+                
+                <div class="theme-grid">
+                    <div class="theme-option active" data-theme="dark">
+                        <div class="theme-preview dark"></div>
+                        <span class="theme-name">Dark</span>
+                    </div>
+                    <div class="theme-option" data-theme="light">
+                        <div class="theme-preview light"></div>
+                        <span class="theme-name">Light</span>
+                    </div>
+                    <div class="theme-option" data-theme="midnight">
+                        <div class="theme-preview midnight"></div>
+                        <span class="theme-name">Midnight</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <div class="settings-card-title">
+                        <i class="fas fa-tint"></i>
+                        Cor de Destaque
+                    </div>
+                </div>
+                
+                <div class="accent-colors">
+                    <div class="accent-color active" style="background: linear-gradient(135deg, #667eea, #764ba2);"></div>
+                    <div class="accent-color" style="background: linear-gradient(135deg, #f093fb, #f5576c);"></div>
+                    <div class="accent-color" style="background: linear-gradient(135deg, #4facfe, #00f2fe);"></div>
+                    <div class="accent-color" style="background: linear-gradient(135deg, #43e97b, #38f9d7);"></div>
+                    <div class="accent-color" style="background: linear-gradient(135deg, #fa709a, #fee140);"></div>
+                    <div class="accent-color" style="background: linear-gradient(135deg, #a8edea, #fed6e3);"></div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Inteligência Artificial -->
+        <section class="settings-section" id="section-ai">
+            <h1 class="section-title">Inteligência Artificial</h1>
+            <p class="section-description">Configure os provedores de IA para análises e insights.</p>
+            
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <div class="settings-card-title">
+                        <i class="fas fa-brain"></i>
+                        Provedores de IA
+                    </div>
+                </div>
+                
+                <div class="integration-item">
+                    <div class="integration-info">
+                        <div class="integration-icon ollama">
+                            <i class="fas fa-robot"></i>
+                        </div>
+                        <div>
+                            <div class="integration-name">Ollama (Local)</div>
+                            <div class="integration-status connected">✓ Conectado - gemma:2b</div>
+                        </div>
+                    </div>
+                    <button class="connect-btn connected">Configurar</button>
+                </div>
+                
+                <div class="integration-item">
+                    <div class="integration-info">
+                        <div class="integration-icon gemini">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div>
+                            <div class="integration-name">Google Gemini 1.5 Flash</div>
+                            <div class="integration-status" id="geminiStatus">Verificando...</div>
+                        </div>
+                    </div>
+                    <button class="connect-btn" id="geminiBtn">Conectar</button>
+                </div>
+            </div>
+            
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <div class="settings-card-title">
+                        <i class="fas fa-key"></i>
+                        Chave de API do Gemini
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label>API Key</label>
+                    <div class="api-key-row">
+                        <input type="password" class="api-key-input" placeholder="AIza..." id="geminiApiKey">
+                        <button class="api-key-btn" onclick="toggleKeyVisibility()">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <small style="color: var(--text-secondary); font-size: 11px;">
+                        Obtenha sua chave em <a href="https://makersuite.google.com/app/apikey" target="_blank" style="color: var(--accent-color);">Google AI Studio</a>
+                    </small>
+                </div>
+                
+                <div class="action-buttons">
+                    <button class="btn-save" onclick="saveGeminiKey()">Salvar Chave</button>
+                </div>
+            </div>
+            
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <div class="settings-card-title">
+                        <i class="fas fa-sliders-h"></i>
+                        Preferências de IA
+                    </div>
+                </div>
+                
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <h4>Priorizar Ollama (Local)</h4>
+                        <p>Use IA local quando disponível para mais privacidade</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <h4>Análise Automática</h4>
+                        <p>Gerar insights automaticamente ao carregar dados</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <h4>Sugestões de Gráficos</h4>
+                        <p>IA sugere os melhores gráficos para seus dados</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Integrações -->
+        <section class="settings-section" id="section-integrations">
+            <h1 class="section-title">Conexões</h1>
+            <p class="section-description">Conecte suas ferramentas favoritas.</p>
+            
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <div class="settings-card-title">
+                        <i class="fas fa-plug"></i>
+                        Integrações Disponíveis
+                    </div>
+                </div>
+                
+                <div class="integration-item">
+                    <div class="integration-info">
+                        <div class="integration-icon github">
+                            <i class="fab fa-github"></i>
+                        </div>
+                        <div>
+                            <div class="integration-name">GitHub</div>
+                            <div class="integration-status connected">✓ Conectado</div>
+                        </div>
+                    </div>
+                    <button class="connect-btn connected">Gerenciar</button>
+                </div>
+                
+                <div class="integration-item">
+                    <div class="integration-info">
+                        <div class="integration-icon google">
+                            <i class="fab fa-google"></i>
+                        </div>
+                        <div>
+                            <div class="integration-name">Google Sheets</div>
+                            <div class="integration-status">Não conectado</div>
+                        </div>
+                    </div>
+                    <button class="connect-btn">Conectar</button>
+                </div>
+                
+                <div class="integration-item">
+                    <div class="integration-info">
+                        <div class="integration-icon slack">
+                            <i class="fab fa-slack"></i>
+                        </div>
+                        <div>
+                            <div class="integration-name">Slack</div>
+                            <div class="integration-status">Não conectado</div>
+                        </div>
+                    </div>
+                    <button class="connect-btn">Conectar</button>
+                </div>
+                
+                <div class="integration-item">
+                    <div class="integration-info">
+                        <div class="integration-icon notion">
+                            <i class="fas fa-sticky-note"></i>
+                        </div>
+                        <div>
+                            <div class="integration-name">Notion</div>
+                            <div class="integration-status">Não conectado</div>
+                        </div>
+                    </div>
+                    <button class="connect-btn">Conectar</button>
+                </div>
+            </div>
+        </section>
+        
+        <!-- API Keys -->
+        <section class="settings-section" id="section-api">
+            <h1 class="section-title">API Keys</h1>
+            <p class="section-description">Gerencie suas chaves de API para integrações externas.</p>
+            
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <div class="settings-card-title">
+                        <i class="fas fa-key"></i>
+                        Suas API Keys
+                    </div>
+                    <button class="btn-save" style="padding: 8px 16px; font-size: 12px;">
+                        <i class="fas fa-plus"></i> Nova Key
+                    </button>
+                </div>
+                
+                <div class="integration-item">
+                    <div class="integration-info">
+                        <div>
+                            <div class="integration-name">Production Key</div>
+                            <div class="integration-status">sk-***************abc123</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="api-key-btn"><i class="fas fa-copy"></i></button>
+                        <button class="api-key-btn"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+                
+                <div class="integration-item">
+                    <div class="integration-info">
+                        <div>
+                            <div class="integration-name">Development Key</div>
+                            <div class="integration-status">sk-***************def456</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="api-key-btn"><i class="fas fa-copy"></i></button>
+                        <button class="api-key-btn"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Notificações -->
+        <section class="settings-section" id="section-notifications">
+            <h1 class="section-title">Notificações</h1>
+            <p class="section-description">Configure como deseja receber notificações.</p>
+            
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <div class="settings-card-title">
+                        <i class="fas fa-bell"></i>
+                        Preferências de Notificação
+                    </div>
+                </div>
+                
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <h4>Notificações por Email</h4>
+                        <p>Receba atualizações importantes por email</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <h4>Alertas de Dados</h4>
+                        <p>Notificações quando métricas atingirem limites definidos</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked>
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <h4>Atualizações de Workspace</h4>
+                        <p>Quando alguém editar relatórios compartilhados</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+                
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <h4>Newsletter</h4>
+                        <p>Dicas e novidades da plataforma</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Dados -->
+        <section class="settings-section" id="section-data">
+            <h1 class="section-title">Dados</h1>
+            <p class="section-description">Gerencie seus dados e armazenamento.</p>
+            
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <div class="settings-card-title">
+                        <i class="fas fa-hdd"></i>
+                        Uso de Armazenamento
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span style="color: var(--text-primary);">2.4 GB usado de 10 GB</span>
+                        <span style="color: var(--text-secondary);">24%</span>
+                    </div>
+                    <div style="height: 8px; background: var(--dark-bg); border-radius: 4px; overflow: hidden;">
+                        <div style="height: 100%; width: 24%; background: linear-gradient(90deg, var(--accent-color), #f093fb); border-radius: 4px;"></div>
+                    </div>
+                </div>
+                
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <h4>Datasets</h4>
+                        <p>1.8 GB em 15 arquivos</p>
+                    </div>
+                    <button class="api-key-btn">Gerenciar</button>
+                </div>
+                
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <h4>Relatórios</h4>
+                        <p>450 MB em 8 relatórios</p>
+                    </div>
+                    <button class="api-key-btn">Gerenciar</button>
+                </div>
+                
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <h4>Cache</h4>
+                        <p>150 MB</p>
+                    </div>
+                    <button class="danger-btn" style="padding: 8px 15px; font-size: 12px;">Limpar</button>
+                </div>
+            </div>
+            
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <div class="settings-card-title">
+                        <i class="fas fa-download"></i>
+                        Exportar Dados
+                    </div>
+                </div>
+                
+                <p style="color: var(--text-secondary); margin-bottom: 20px;">
+                    Baixe uma cópia de todos os seus dados em formato JSON.
+                </p>
+                
+                <button class="btn-save">
+                    <i class="fas fa-download"></i> Exportar Todos os Dados
+                </button>
+            </div>
+        </section>
+        
+        <!-- Display -->
+        <section class="settings-section" id="section-display">
+            <h1 class="section-title">Exibição</h1>
+            <p class="section-description">Personalize a experiência visual.</p>
+            
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <div class="settings-card-title">
+                        <i class="fas fa-text-height"></i>
+                        Tamanho da Fonte
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <input type="range" min="12" max="20" value="14" style="width: 100%;">
+                    <div style="display: flex; justify-content: space-between; color: var(--text-secondary); font-size: 12px; margin-top: 5px;">
+                        <span>Pequeno</span>
+                        <span>Normal</span>
+                        <span>Grande</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="settings-card">
+                <div class="settings-card-header">
+                    <div class="settings-card-title">
+                        <i class="fas fa-compress-arrows-alt"></i>
+                        Densidade
+                    </div>
+                </div>
+                
+                <div class="toggle-row">
+                    <div class="toggle-info">
+                        <h4>Modo Compacto</h4>
+                        <p>Reduz espaçamento para mostrar mais conteúdo</p>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            </div>
+        </section>
+    </main>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// Navegação entre seções
+document.querySelectorAll('.nav-item').forEach(item => {
+    item.onclick = () => {
+        const section = item.dataset.section;
+        
+        // Atualizar navegação
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+        
+        // Atualizar seção
+        document.querySelectorAll('.settings-section').forEach(s => s.classList.remove('active'));
+        document.getElementById(`section-${section}`).classList.add('active');
+    };
+});
+
+// Temas
+document.querySelectorAll('.theme-option').forEach(opt => {
+    opt.onclick = () => {
+        document.querySelectorAll('.theme-option').forEach(o => o.classList.remove('active'));
+        opt.classList.add('active');
+        
+        const theme = opt.dataset.theme;
+        saveTheme(theme);
+    };
+});
+
+// Cores de destaque
+document.querySelectorAll('.accent-color').forEach(color => {
+    color.onclick = () => {
+        document.querySelectorAll('.accent-color').forEach(c => c.classList.remove('active'));
+        color.classList.add('active');
+    };
+});
+
+// Verificar status da IA
+async function checkAIStatus() {
+    try {
+        const response = await fetch('/api/ai/status');
+        const data = await response.json();
+        
+        const geminiStatus = document.getElementById('geminiStatus');
+        const geminiBtn = document.getElementById('geminiBtn');
+        
+        if (data.gemini) {
+            geminiStatus.textContent = '✓ Conectado';
+            geminiStatus.classList.add('connected');
+            geminiBtn.textContent = 'Configurar';
+            geminiBtn.classList.add('connected');
+        } else {
+            geminiStatus.textContent = 'Não conectado';
+        }
+    } catch (error) {
+        console.error('Erro ao verificar IA:', error);
+    }
+}
+
+// Salvar perfil
+async function saveProfile() {
+    const data = {
+        name: document.getElementById('inputName').value,
+        email: document.getElementById('inputEmail').value
+    };
+    
+    try {
+        const response = await fetch('/api/settings/profile', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+        
+        const result = await response.json();
+        if (result.status === 'ok') {
+            showToast('Perfil atualizado com sucesso!');
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+    }
+}
+
+// Salvar tema
+async function saveTheme(theme) {
+    try {
+        const response = await fetch('/api/settings/theme', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({theme})
+        });
+        
+        const result = await response.json();
+        if (result.status === 'ok') {
+            showToast(`Tema ${theme} aplicado!`);
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+    }
+}
+
+// Toggle visibilidade da key
+function toggleKeyVisibility() {
+    const input = document.getElementById('geminiApiKey');
+    input.type = input.type === 'password' ? 'text' : 'password';
+}
+
+// Salvar chave Gemini
+async function saveGeminiKey() {
+    const key = document.getElementById('geminiApiKey').value;
+    if (!key) {
+        alert('Digite a chave de API');
+        return;
+    }
+    
+    // Em produção, enviar para backend
+    localStorage.setItem('gemini_api_key', key);
+    showToast('Chave salva com sucesso!');
+    checkAIStatus();
+}
+
+// Toast
+function showToast(message) {
+    const toast = document.createElement('div');
+    toast.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--accent-color);
+        color: white;
+        padding: 12px 25px;
+        border-radius: 8px;
+        z-index: 2000;
+        animation: slideUp 0.3s ease;
+    `;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 2000);
+}
+
+// Inicializar
+checkAIStatus();
+</script>
+{% endblock %}

@@ -1,0 +1,988 @@
+{% extends "base.html" %}
+
+{% block title %}Data Model - ANALYSTIC.A{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="/static/powerbi.css">
+<style>
+    .model-container {
+        display: flex;
+        height: calc(100vh - 120px);
+        background: var(--dark-bg);
+    }
+    
+    /* Sidebar de Tabelas */
+    .tables-sidebar {
+        width: 280px;
+        background: var(--card-bg);
+        border-right: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .sidebar-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border-color);
+    }
+    
+    .sidebar-header h3 {
+        color: var(--text-primary);
+        font-size: 14px;
+        font-weight: 600;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .search-tables {
+        width: 100%;
+        padding: 10px 12px;
+        background: var(--dark-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 6px;
+        color: var(--text-primary);
+        font-size: 13px;
+    }
+    
+    .tables-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 10px;
+    }
+    
+    .table-item {
+        background: var(--dark-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 12px;
+        margin-bottom: 10px;
+        cursor: grab;
+        transition: all 0.2s;
+    }
+    
+    .table-item:hover {
+        border-color: var(--accent-color);
+        transform: translateX(5px);
+    }
+    
+    .table-item.dragging {
+        opacity: 0.5;
+        cursor: grabbing;
+    }
+    
+    .table-name {
+        font-weight: 600;
+        color: var(--text-primary);
+        font-size: 13px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin-bottom: 8px;
+    }
+    
+    .table-name i {
+        color: var(--accent-color);
+    }
+    
+    .table-info {
+        font-size: 11px;
+        color: var(--text-secondary);
+    }
+    
+    .column-list {
+        margin-top: 10px;
+        padding-top: 10px;
+        border-top: 1px solid var(--border-color);
+        display: none;
+    }
+    
+    .table-item.expanded .column-list {
+        display: block;
+    }
+    
+    .column-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 4px 0;
+        font-size: 12px;
+        color: var(--text-secondary);
+    }
+    
+    .column-item i {
+        font-size: 10px;
+        color: #667eea;
+    }
+    
+    .column-item.key i {
+        color: #ffd700;
+    }
+    
+    /* Canvas de Modelagem */
+    .model-canvas {
+        flex: 1;
+        position: relative;
+        overflow: hidden;
+        background: 
+            radial-gradient(circle at center, rgba(102,126,234,0.03) 0%, transparent 70%),
+            linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+        background-size: 100% 100%, 30px 30px, 30px 30px;
+    }
+    
+    .canvas-toolbar {
+        position: absolute;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        gap: 10px;
+        background: var(--card-bg);
+        padding: 10px 20px;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        z-index: 100;
+    }
+    
+    .toolbar-btn {
+        background: var(--dark-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 12px;
+        transition: all 0.2s;
+    }
+    
+    .toolbar-btn:hover {
+        border-color: var(--accent-color);
+        color: var(--accent-color);
+    }
+    
+    .toolbar-btn.active {
+        background: var(--accent-color);
+        border-color: var(--accent-color);
+        color: white;
+    }
+    
+    /* Tabelas no Canvas */
+    .canvas-table {
+        position: absolute;
+        background: var(--card-bg);
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        min-width: 200px;
+        cursor: move;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        z-index: 10;
+    }
+    
+    .canvas-table:hover {
+        border-color: var(--accent-color);
+        box-shadow: 0 0 30px rgba(102,126,234,0.3);
+    }
+    
+    .canvas-table.selected {
+        border-color: #f093fb;
+        box-shadow: 0 0 30px rgba(240,147,251,0.4);
+    }
+    
+    .canvas-table-header {
+        background: linear-gradient(135deg, var(--accent-color), #f093fb);
+        padding: 12px 15px;
+        border-radius: 8px 8px 0 0;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .canvas-table-header h4 {
+        color: white;
+        font-size: 13px;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .canvas-table-header .table-menu {
+        color: white;
+        opacity: 0.7;
+        cursor: pointer;
+    }
+    
+    .canvas-table-header .table-menu:hover {
+        opacity: 1;
+    }
+    
+    .canvas-table-columns {
+        padding: 8px 0;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    
+    .canvas-column {
+        padding: 8px 15px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 12px;
+        color: var(--text-secondary);
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    
+    .canvas-column:hover {
+        background: var(--dark-bg);
+    }
+    
+    .canvas-column i {
+        font-size: 10px;
+        width: 14px;
+    }
+    
+    .canvas-column .key-icon {
+        color: #ffd700;
+    }
+    
+    .canvas-column .fk-icon {
+        color: #00d4aa;
+    }
+    
+    .canvas-column .text-icon {
+        color: #667eea;
+    }
+    
+    .canvas-column .num-icon {
+        color: #f093fb;
+    }
+    
+    .canvas-table-footer {
+        padding: 8px 15px;
+        border-top: 1px solid var(--border-color);
+        font-size: 11px;
+        color: var(--text-secondary);
+        display: flex;
+        justify-content: space-between;
+    }
+    
+    /* Linhas de Relacionamento */
+    .relationship-line {
+        position: absolute;
+        pointer-events: none;
+        z-index: 5;
+    }
+    
+    .relationship-svg {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        z-index: 5;
+    }
+    
+    .relationship-path {
+        fill: none;
+        stroke: var(--accent-color);
+        stroke-width: 2;
+        stroke-dasharray: 8,4;
+        animation: dashFlow 1s linear infinite;
+    }
+    
+    @keyframes dashFlow {
+        to {
+            stroke-dashoffset: -12;
+        }
+    }
+    
+    .relationship-marker {
+        fill: var(--accent-color);
+    }
+    
+    /* Painel de Medidas */
+    .measures-panel {
+        width: 300px;
+        background: var(--card-bg);
+        border-left: 1px solid var(--border-color);
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .panel-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .panel-header h3 {
+        color: var(--text-primary);
+        font-size: 14px;
+        font-weight: 600;
+    }
+    
+    .add-measure-btn {
+        background: var(--accent-color);
+        border: none;
+        color: white;
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .measures-list {
+        flex: 1;
+        overflow-y: auto;
+        padding: 15px;
+    }
+    
+    .measure-item {
+        background: var(--dark-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 10px;
+    }
+    
+    .measure-name {
+        color: var(--text-primary);
+        font-weight: 600;
+        font-size: 13px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    
+    .measure-name i {
+        color: #f093fb;
+    }
+    
+    .measure-formula {
+        background: rgba(102,126,234,0.1);
+        padding: 10px;
+        border-radius: 6px;
+        font-family: 'Fira Code', monospace;
+        font-size: 11px;
+        color: #667eea;
+        word-break: break-all;
+    }
+    
+    .measure-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 10px;
+    }
+    
+    .measure-btn {
+        background: transparent;
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 11px;
+        cursor: pointer;
+    }
+    
+    .measure-btn:hover {
+        border-color: var(--accent-color);
+        color: var(--accent-color);
+    }
+    
+    /* Modal de Nova Medida */
+    .measure-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0,0,0,0.8);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .measure-modal.active {
+        display: flex;
+    }
+    
+    .measure-modal-content {
+        background: var(--card-bg);
+        border-radius: 16px;
+        width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+    
+    .modal-header {
+        padding: 20px;
+        border-bottom: 1px solid var(--border-color);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    
+    .modal-header h3 {
+        color: var(--text-primary);
+        font-size: 16px;
+    }
+    
+    .modal-close {
+        background: none;
+        border: none;
+        color: var(--text-secondary);
+        font-size: 20px;
+        cursor: pointer;
+    }
+    
+    .modal-body {
+        padding: 20px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+    }
+    
+    .form-group label {
+        display: block;
+        color: var(--text-secondary);
+        font-size: 12px;
+        margin-bottom: 8px;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        background: var(--dark-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-primary);
+        font-size: 14px;
+    }
+    
+    .form-group textarea {
+        min-height: 120px;
+        font-family: 'Fira Code', monospace;
+    }
+    
+    .dax-functions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 10px;
+    }
+    
+    .dax-btn {
+        background: var(--dark-bg);
+        border: 1px solid var(--border-color);
+        color: var(--accent-color);
+        padding: 5px 12px;
+        border-radius: 20px;
+        font-size: 11px;
+        cursor: pointer;
+    }
+    
+    .dax-btn:hover {
+        background: var(--accent-color);
+        color: white;
+    }
+    
+    .modal-footer {
+        padding: 20px;
+        border-top: 1px solid var(--border-color);
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+    
+    .btn-cancel {
+        background: var(--dark-bg);
+        border: 1px solid var(--border-color);
+        color: var(--text-secondary);
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+    
+    .btn-save {
+        background: linear-gradient(135deg, var(--accent-color), #f093fb);
+        border: none;
+        color: white;
+        padding: 10px 25px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+    }
+    
+    /* Zoom controls */
+    .zoom-controls {
+        position: absolute;
+        bottom: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+        z-index: 100;
+    }
+    
+    .zoom-btn {
+        width: 36px;
+        height: 36px;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 8px;
+        color: var(--text-primary);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .zoom-btn:hover {
+        border-color: var(--accent-color);
+    }
+    
+    .zoom-level {
+        text-align: center;
+        font-size: 11px;
+        color: var(--text-secondary);
+        padding: 5px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="model-container">
+    <!-- Sidebar de Tabelas -->
+    <div class="tables-sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-database"></i> Tabelas</h3>
+            <input type="text" class="search-tables" placeholder="Buscar tabelas..." id="searchTables">
+        </div>
+        <div class="tables-list" id="tablesList">
+            <!-- Tabelas carregadas via JS -->
+        </div>
+    </div>
+    
+    <!-- Canvas de Modelagem -->
+    <div class="model-canvas" id="modelCanvas">
+        <div class="canvas-toolbar">
+            <button class="toolbar-btn" id="btnAutoLayout" title="Auto Layout">
+                <i class="fas fa-magic"></i> Auto Layout
+            </button>
+            <button class="toolbar-btn" id="btnAddRelationship" title="Criar Relacionamento">
+                <i class="fas fa-link"></i> Relacionamento
+            </button>
+            <button class="toolbar-btn" id="btnRefresh" title="Atualizar">
+                <i class="fas fa-sync-alt"></i>
+            </button>
+            <button class="toolbar-btn" id="btnExport" title="Exportar Modelo">
+                <i class="fas fa-download"></i> Exportar
+            </button>
+        </div>
+        
+        <!-- SVG para linhas de relacionamento -->
+        <svg class="relationship-svg" id="relationshipSvg">
+            <defs>
+                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                    <polygon points="0 0, 10 3.5, 0 7" class="relationship-marker"/>
+                </marker>
+                <marker id="one" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+                    <line x1="5" y1="0" x2="5" y2="10" stroke="var(--accent-color)" stroke-width="2"/>
+                </marker>
+                <marker id="many" markerWidth="15" markerHeight="10" refX="7" refY="5" orient="auto">
+                    <path d="M0,5 L7,0 M0,5 L7,10 M0,5 L14,5" stroke="var(--accent-color)" stroke-width="2" fill="none"/>
+                </marker>
+            </defs>
+        </svg>
+        
+        <!-- Tabelas no canvas serão criadas via JS -->
+        <div id="canvasTables"></div>
+        
+        <!-- Zoom controls -->
+        <div class="zoom-controls">
+            <button class="zoom-btn" id="zoomIn"><i class="fas fa-plus"></i></button>
+            <div class="zoom-level" id="zoomLevel">100%</div>
+            <button class="zoom-btn" id="zoomOut"><i class="fas fa-minus"></i></button>
+            <button class="zoom-btn" id="zoomReset"><i class="fas fa-compress-arrows-alt"></i></button>
+        </div>
+    </div>
+    
+    <!-- Painel de Medidas -->
+    <div class="measures-panel">
+        <div class="panel-header">
+            <h3><i class="fas fa-calculator"></i> Medidas DAX</h3>
+            <button class="add-measure-btn" id="btnAddMeasure" title="Nova Medida">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+        <div class="measures-list" id="measuresList">
+            <!-- Medidas carregadas via JS -->
+        </div>
+    </div>
+</div>
+
+<!-- Modal Nova Medida -->
+<div class="measure-modal" id="measureModal">
+    <div class="measure-modal-content">
+        <div class="modal-header">
+            <h3><i class="fas fa-calculator"></i> Nova Medida DAX</h3>
+            <button class="modal-close" id="closeMeasureModal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="form-group">
+                <label>Nome da Medida</label>
+                <input type="text" id="measureName" placeholder="Ex: Total Vendas">
+            </div>
+            <div class="form-group">
+                <label>Fórmula DAX</label>
+                <textarea id="measureFormula" placeholder="Ex: SUM(Vendas[Valor])"></textarea>
+                <div class="dax-functions">
+                    <button class="dax-btn" data-formula="SUM()">SUM</button>
+                    <button class="dax-btn" data-formula="AVERAGE()">AVERAGE</button>
+                    <button class="dax-btn" data-formula="COUNT()">COUNT</button>
+                    <button class="dax-btn" data-formula="DISTINCTCOUNT()">DISTINCTCOUNT</button>
+                    <button class="dax-btn" data-formula="CALCULATE()">CALCULATE</button>
+                    <button class="dax-btn" data-formula="FILTER()">FILTER</button>
+                    <button class="dax-btn" data-formula="SUMX()">SUMX</button>
+                    <button class="dax-btn" data-formula="RELATED()">RELATED</button>
+                    <button class="dax-btn" data-formula="IF()">IF</button>
+                    <button class="dax-btn" data-formula="DIVIDE()">DIVIDE</button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn-cancel" id="cancelMeasure">Cancelar</button>
+            <button class="btn-save" id="saveMeasure">Criar Medida</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let dataModel = null;
+let zoom = 1;
+let isDragging = false;
+let dragElement = null;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
+
+// Carregar modelo
+async function loadDataModel() {
+    try {
+        const response = await fetch('/api/data-model');
+        const data = await response.json();
+        dataModel = data.model;
+        
+        renderTables();
+        renderCanvasTables();
+        renderMeasures();
+        drawRelationships();
+    } catch (error) {
+        console.error('Erro ao carregar modelo:', error);
+    }
+}
+
+// Renderizar lista de tabelas na sidebar
+function renderTables() {
+    const container = document.getElementById('tablesList');
+    container.innerHTML = '';
+    
+    dataModel.tables.forEach(table => {
+        const div = document.createElement('div');
+        div.className = 'table-item';
+        div.draggable = true;
+        div.dataset.tableId = table.id;
+        
+        div.innerHTML = `
+            <div class="table-name">
+                <i class="fas fa-table"></i>
+                ${table.name}
+            </div>
+            <div class="table-info">${table.row_count.toLocaleString()} linhas · ${table.columns.length} colunas</div>
+            <div class="column-list">
+                ${table.columns.map((col, i) => `
+                    <div class="column-item ${i === 0 ? 'key' : ''}">
+                        <i class="fas fa-${i === 0 ? 'key' : 'columns'}"></i>
+                        ${col}
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        
+        div.onclick = () => div.classList.toggle('expanded');
+        container.appendChild(div);
+    });
+}
+
+// Renderizar tabelas no canvas
+function renderCanvasTables() {
+    const container = document.getElementById('canvasTables');
+    container.innerHTML = '';
+    
+    dataModel.tables.forEach(table => {
+        const div = document.createElement('div');
+        div.className = 'canvas-table';
+        div.id = `canvas-${table.id}`;
+        div.style.left = table.x + 'px';
+        div.style.top = table.y + 'px';
+        
+        div.innerHTML = `
+            <div class="canvas-table-header">
+                <h4><i class="fas fa-table"></i> ${table.name}</h4>
+                <i class="fas fa-ellipsis-v table-menu"></i>
+            </div>
+            <div class="canvas-table-columns">
+                ${table.columns.map((col, i) => `
+                    <div class="canvas-column" data-column="${col}">
+                        <i class="fas fa-${getColumnIcon(col, i)} ${getColumnIconClass(col, i)}"></i>
+                        ${col}
+                    </div>
+                `).join('')}
+            </div>
+            <div class="canvas-table-footer">
+                <span>${table.row_count.toLocaleString()} linhas</span>
+                <span>${table.columns.length} cols</span>
+            </div>
+        `;
+        
+        // Drag functionality
+        div.onmousedown = (e) => {
+            if (e.target.classList.contains('canvas-column')) return;
+            isDragging = true;
+            dragElement = div;
+            dragOffsetX = e.clientX - div.offsetLeft;
+            dragOffsetY = e.clientY - div.offsetTop;
+            div.classList.add('selected');
+        };
+        
+        container.appendChild(div);
+    });
+}
+
+function getColumnIcon(col, index) {
+    if (index === 0 || col.toLowerCase() === 'id') return 'key';
+    if (col.toLowerCase().includes('_id')) return 'link';
+    if (col.toLowerCase().includes('valor') || col.toLowerCase().includes('preco') || col.toLowerCase().includes('quantidade')) return 'hashtag';
+    if (col.toLowerCase().includes('data')) return 'calendar';
+    return 'font';
+}
+
+function getColumnIconClass(col, index) {
+    if (index === 0 || col.toLowerCase() === 'id') return 'key-icon';
+    if (col.toLowerCase().includes('_id')) return 'fk-icon';
+    if (col.toLowerCase().includes('valor') || col.toLowerCase().includes('preco')) return 'num-icon';
+    return 'text-icon';
+}
+
+// Desenhar relacionamentos
+function drawRelationships() {
+    const svg = document.getElementById('relationshipSvg');
+    const paths = svg.querySelectorAll('.relationship-path-dynamic');
+    paths.forEach(p => p.remove());
+    
+    dataModel.relationships.forEach(rel => {
+        const fromTable = document.getElementById(`canvas-${rel.from_table}`);
+        const toTable = document.getElementById(`canvas-${rel.to_table}`);
+        
+        if (!fromTable || !toTable) return;
+        
+        const fromRect = fromTable.getBoundingClientRect();
+        const toRect = toTable.getBoundingClientRect();
+        const canvasRect = document.getElementById('modelCanvas').getBoundingClientRect();
+        
+        // Calcular pontos de conexão
+        const fromX = fromRect.right - canvasRect.left;
+        const fromY = fromRect.top + fromRect.height/2 - canvasRect.top;
+        const toX = toRect.left - canvasRect.left;
+        const toY = toRect.top + toRect.height/2 - canvasRect.top;
+        
+        // Criar path curvo
+        const midX = (fromX + toX) / 2;
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('class', 'relationship-path relationship-path-dynamic');
+        path.setAttribute('d', `M ${fromX} ${fromY} C ${midX} ${fromY}, ${midX} ${toY}, ${toX} ${toY}`);
+        path.setAttribute('marker-end', 'url(#arrowhead)');
+        
+        svg.appendChild(path);
+    });
+}
+
+// Renderizar medidas
+function renderMeasures() {
+    const container = document.getElementById('measuresList');
+    container.innerHTML = '';
+    
+    dataModel.measures.forEach(measure => {
+        const div = document.createElement('div');
+        div.className = 'measure-item';
+        div.innerHTML = `
+            <div class="measure-name">
+                <i class="fas fa-calculator"></i>
+                ${measure.name}
+            </div>
+            <div class="measure-formula">${measure.formula}</div>
+            <div class="measure-actions">
+                <button class="measure-btn"><i class="fas fa-edit"></i> Editar</button>
+                <button class="measure-btn"><i class="fas fa-copy"></i> Copiar</button>
+            </div>
+        `;
+        container.appendChild(div);
+    });
+}
+
+// Mouse move for dragging
+document.addEventListener('mousemove', (e) => {
+    if (!isDragging || !dragElement) return;
+    
+    const canvas = document.getElementById('modelCanvas');
+    const rect = canvas.getBoundingClientRect();
+    
+    let newX = e.clientX - dragOffsetX;
+    let newY = e.clientY - dragOffsetY;
+    
+    // Limitar ao canvas
+    newX = Math.max(0, Math.min(newX, canvas.offsetWidth - dragElement.offsetWidth));
+    newY = Math.max(60, Math.min(newY, canvas.offsetHeight - dragElement.offsetHeight));
+    
+    dragElement.style.left = newX + 'px';
+    dragElement.style.top = newY + 'px';
+    
+    drawRelationships();
+});
+
+document.addEventListener('mouseup', () => {
+    if (dragElement) {
+        dragElement.classList.remove('selected');
+    }
+    isDragging = false;
+    dragElement = null;
+});
+
+// Modal de medida
+document.getElementById('btnAddMeasure').onclick = () => {
+    document.getElementById('measureModal').classList.add('active');
+};
+
+document.getElementById('closeMeasureModal').onclick = () => {
+    document.getElementById('measureModal').classList.remove('active');
+};
+
+document.getElementById('cancelMeasure').onclick = () => {
+    document.getElementById('measureModal').classList.remove('active');
+};
+
+// Botões DAX
+document.querySelectorAll('.dax-btn').forEach(btn => {
+    btn.onclick = () => {
+        const formula = btn.dataset.formula;
+        const textarea = document.getElementById('measureFormula');
+        const cursorPos = textarea.selectionStart;
+        const textBefore = textarea.value.substring(0, cursorPos);
+        const textAfter = textarea.value.substring(cursorPos);
+        textarea.value = textBefore + formula + textAfter;
+        textarea.focus();
+        textarea.selectionStart = textarea.selectionEnd = cursorPos + formula.length - 1;
+    };
+});
+
+// Salvar medida
+document.getElementById('saveMeasure').onclick = async () => {
+    const name = document.getElementById('measureName').value;
+    const formula = document.getElementById('measureFormula').value;
+    
+    if (!name || !formula) {
+        alert('Preencha nome e fórmula');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/data-model/measure', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({name, formula})
+        });
+        
+        const data = await response.json();
+        
+        if (data.status === 'ok') {
+            dataModel.measures.push(data.measure);
+            renderMeasures();
+            document.getElementById('measureModal').classList.remove('active');
+            document.getElementById('measureName').value = '';
+            document.getElementById('measureFormula').value = '';
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+    }
+};
+
+// Auto Layout
+document.getElementById('btnAutoLayout').onclick = () => {
+    const tables = document.querySelectorAll('.canvas-table');
+    const startX = 100;
+    const startY = 100;
+    const spacingX = 300;
+    const spacingY = 250;
+    const cols = 3;
+    
+    tables.forEach((table, i) => {
+        const col = i % cols;
+        const row = Math.floor(i / cols);
+        table.style.left = (startX + col * spacingX) + 'px';
+        table.style.top = (startY + row * spacingY) + 'px';
+    });
+    
+    drawRelationships();
+};
+
+// Zoom
+document.getElementById('zoomIn').onclick = () => {
+    zoom = Math.min(2, zoom + 0.1);
+    applyZoom();
+};
+
+document.getElementById('zoomOut').onclick = () => {
+    zoom = Math.max(0.5, zoom - 0.1);
+    applyZoom();
+};
+
+document.getElementById('zoomReset').onclick = () => {
+    zoom = 1;
+    applyZoom();
+};
+
+function applyZoom() {
+    document.getElementById('canvasTables').style.transform = `scale(${zoom})`;
+    document.getElementById('zoomLevel').textContent = Math.round(zoom * 100) + '%';
+}
+
+// Buscar tabelas
+document.getElementById('searchTables').oninput = (e) => {
+    const query = e.target.value.toLowerCase();
+    document.querySelectorAll('.table-item').forEach(item => {
+        const name = item.querySelector('.table-name').textContent.toLowerCase();
+        item.style.display = name.includes(query) ? 'block' : 'none';
+    });
+};
+
+// Inicializar
+loadDataModel();
+</script>
+{% endblock %}

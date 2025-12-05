@@ -1,0 +1,775 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="workspaces-container">
+    
+    <!-- HEADER -->
+    <header class="page-header">
+        <div class="header-left">
+            <h1>🏢 Workspaces</h1>
+            <p>Gerencie suas áreas de trabalho e colaboradores.</p>
+        </div>
+        <div class="header-right">
+            <button class="btn-primary" onclick="openCreateModal()">
+                <span>➕</span> Novo Workspace
+            </button>
+        </div>
+    </header>
+
+    <!-- GRID DE WORKSPACES -->
+    <div class="workspaces-grid" id="workspacesGrid">
+        <!-- Workspace cards serão carregados aqui -->
+    </div>
+
+    <!-- MODAL: CRIAR WORKSPACE -->
+    <div class="modal" id="createModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>➕ Novo Workspace</h2>
+                <button class="modal-close" onclick="closeModal('createModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>Nome do Workspace</label>
+                    <input type="text" id="wsName" placeholder="Ex.: Análise de Vendas 2025">
+                </div>
+                <div class="form-group">
+                    <label>Descrição (opcional)</label>
+                    <textarea id="wsDescription" placeholder="Descreva o objetivo deste workspace..."></textarea>
+                </div>
+                <button class="btn-primary full-width" onclick="createWorkspace()">
+                    🚀 Criar Workspace
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: COMPARTILHAR -->
+    <div class="modal" id="shareModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>👥 Compartilhar Workspace</h2>
+                <button class="modal-close" onclick="closeModal('shareModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>E-mail do usuário</label>
+                    <input type="email" id="shareEmail" placeholder="usuario@email.com">
+                </div>
+                <div class="form-group">
+                    <label>Permissão</label>
+                    <select id="shareRole">
+                        <option value="viewer">👁️ Visualizador — Apenas visualiza</option>
+                        <option value="editor">✏️ Editor — Pode editar dashboards</option>
+                        <option value="admin">👑 Administrador — Pode gerenciar usuários</option>
+                    </select>
+                </div>
+                <button class="btn-primary full-width" onclick="shareWorkspace()">
+                    📤 Enviar Convite
+                </button>
+                
+                <div class="shared-users" id="sharedUsers">
+                    <h4>Usuários com acesso:</h4>
+                    <!-- Lista de usuários -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: PUBLICAR DASHBOARD -->
+    <div class="modal" id="publishModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🌐 Publicar Dashboard</h2>
+                <button class="modal-close" onclick="closeModal('publishModal')">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="publish-options">
+                    <div class="publish-option">
+                        <input type="checkbox" id="isPublic" checked>
+                        <label for="isPublic">
+                            <strong>Link Público</strong>
+                            <span>Qualquer pessoa com o link pode visualizar.</span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="publish-result" id="publishResult" style="display: none;">
+                    <div class="result-section">
+                        <label>🔗 Link Público:</label>
+                        <div class="copy-box">
+                            <input type="text" id="publicUrl" readonly>
+                            <button onclick="copyLink()">📋</button>
+                        </div>
+                    </div>
+                    
+                    <div class="result-section">
+                        <label>📝 Código de Incorporação (iframe):</label>
+                        <div class="copy-box">
+                            <textarea id="embedCode" readonly></textarea>
+                            <button onclick="copyEmbed()">📋</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <button class="btn-primary full-width" onclick="publishDashboard()">
+                    ☁️ Publicar
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<style>
+.workspaces-container {
+    padding: 30px;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 2rem;
+}
+
+.page-header p {
+    margin: 5px 0 0;
+    color: var(--text-muted);
+}
+
+.btn-primary {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 24px;
+    background: linear-gradient(135deg, var(--accent), #0088cc);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(0, 212, 255, 0.3);
+}
+
+.btn-primary.full-width {
+    width: 100%;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+/* GRID DE WORKSPACES */
+.workspaces-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 20px;
+}
+
+.workspace-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 25px;
+    transition: all 0.3s;
+}
+
+.workspace-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-3px);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.ws-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.ws-icon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--accent), var(--glow));
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+}
+
+.ws-menu {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+.ws-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+.ws-description {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.ws-stats {
+    display: flex;
+    gap: 20px;
+    padding: 15px 0;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 15px;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent);
+}
+
+.stat-label {
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.ws-users {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.user-avatars {
+    display: flex;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: 600;
+    margin-left: -8px;
+    border: 2px solid var(--card-bg);
+}
+
+.user-avatar:first-child {
+    margin-left: 0;
+}
+
+.ws-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.ws-btn {
+    flex: 1;
+    padding: 10px;
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.ws-btn:hover {
+    background: var(--border);
+}
+
+.ws-btn.primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #000;
+}
+
+/* MODAIS */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal.active {
+    display: flex;
+}
+
+.modal-content {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    overflow: hidden;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.modal-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.modal-close {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.modal-body {
+    padding: 25px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 12px 15px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.form-group textarea {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.shared-users {
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+}
+
+.shared-users h4 {
+    margin: 0 0 15px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.user-item:last-child {
+    border-bottom: none;
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-name {
+    font-weight: 500;
+}
+
+.user-email {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.user-role {
+    padding: 4px 10px;
+    background: var(--bg);
+    border-radius: 20px;
+    font-size: 0.75rem;
+}
+
+/* PUBLICAR */
+.publish-options {
+    margin-bottom: 20px;
+}
+
+.publish-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 15px;
+    background: var(--bg);
+    border-radius: 8px;
+}
+
+.publish-option input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: var(--accent);
+}
+
+.publish-option label {
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+}
+
+.publish-option label strong {
+    margin-bottom: 4px;
+}
+
+.publish-option label span {
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.publish-result {
+    margin-top: 20px;
+}
+
+.result-section {
+    margin-bottom: 15px;
+}
+
+.result-section label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.copy-box {
+    display: flex;
+    gap: 10px;
+}
+
+.copy-box input,
+.copy-box textarea {
+    flex: 1;
+    padding: 10px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text);
+    font-size: 12px;
+}
+
+.copy-box textarea {
+    min-height: 80px;
+    font-family: monospace;
+}
+
+.copy-box button {
+    padding: 10px 15px;
+    background: var(--border);
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.copy-box button:hover {
+    background: var(--accent);
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .workspaces-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+let currentWorkspaceId = null;
+let currentDashboardId = null;
+
+// Carregar workspaces ao iniciar
+document.addEventListener('DOMContentLoaded', loadWorkspaces);
+
+async function loadWorkspaces() {
+    try {
+        const response = await fetch('/api/workspaces');
+        const workspaces = await response.json();
+        renderWorkspaces(workspaces);
+    } catch (error) {
+        console.error('Erro ao carregar workspaces:', error);
+        renderWorkspaces([]);
+    }
+}
+
+function renderWorkspaces(workspaces) {
+    const grid = document.getElementById('workspacesGrid');
+    
+    if (workspaces.length === 0) {
+        grid.innerHTML = `
+            <div class="empty-state" style="grid-column: 1/-1; text-align: center; padding: 60px;">
+                <div style="font-size: 4rem; margin-bottom: 20px;">📊</div>
+                <h3>Nenhum workspace ainda</h3>
+                <p style="color: var(--text-muted);">Crie seu primeiro workspace para começar a analisar dados!</p>
+                <button class="btn-primary" onclick="openCreateModal()" style="margin-top: 20px;">
+                    ➕ Criar Workspace
+                </button>
+            </div>
+        `;
+        return;
+    }
+    
+    grid.innerHTML = workspaces.map(ws => `
+        <div class="workspace-card">
+            <div class="ws-header">
+                <div class="ws-icon">📊</div>
+                <button class="ws-menu" onclick="showMenu('${ws.id}')">⋮</button>
+            </div>
+            
+            <h3 class="ws-title">${ws.name}</h3>
+            <p class="ws-description">${ws.description || 'Sem descrição'}</p>
+            
+            <div class="ws-stats">
+                <div class="stat-item">
+                    <span class="stat-value">${ws.dashboards_count || 0}</span>
+                    <span class="stat-label">Dashboards</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-value">${ws.datasets_count || 0}</span>
+                    <span class="stat-label">Datasets</span>
+                </div>
+            </div>
+            
+            <div class="ws-users">
+                <div class="user-avatars">
+                    <div class="user-avatar">${(ws.owner || 'U')[0].toUpperCase()}</div>
+                </div>
+                <span style="color: var(--text-muted); font-size: 0.85rem;">Proprietário</span>
+            </div>
+            
+            <div class="ws-actions">
+                <button class="ws-btn primary" onclick="openWorkspace('${ws.id}')">
+                    📊 Abrir
+                </button>
+                <button class="ws-btn" onclick="openShareModal('${ws.id}')">
+                    👥 Compartilhar
+                </button>
+            </div>
+        </div>
+    `).join('');
+}
+
+function openCreateModal() {
+    document.getElementById('createModal').classList.add('active');
+}
+
+function closeModal(id) {
+    document.getElementById(id).classList.remove('active');
+}
+
+async function createWorkspace() {
+    const name = document.getElementById('wsName').value.trim();
+    const description = document.getElementById('wsDescription').value.trim();
+    
+    if (!name) {
+        alert('Digite um nome para o workspace');
+        return;
+    }
+    
+    try {
+        const response = await fetch('/api/workspaces', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name, description })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            closeModal('createModal');
+            document.getElementById('wsName').value = '';
+            document.getElementById('wsDescription').value = '';
+            loadWorkspaces();
+            showNotification('✅ Workspace criado com sucesso!', 'success');
+        } else {
+            showNotification('❌ ' + result.error, 'error');
+        }
+    } catch (error) {
+        showNotification('❌ Erro ao criar workspace', 'error');
+    }
+}
+
+function openWorkspace(id) {
+    window.location.href = `/workspace?id=${id}`;
+}
+
+function openShareModal(id) {
+    currentWorkspaceId = id;
+    document.getElementById('shareModal').classList.add('active');
+    loadSharedUsers(id);
+}
+
+async function loadSharedUsers(workspaceId) {
+    try {
+        const response = await fetch(`/api/workspaces/${workspaceId}/users`);
+        const users = await response.json();
+        
+        const container = document.getElementById('sharedUsers');
+        if (users.length === 0) {
+            container.innerHTML = '<p style="color: var(--text-muted);">Nenhum usuário adicional</p>';
+        } else {
+            container.innerHTML = `
+                <h4>Usuários com acesso:</h4>
+                ${users.map(u => `
+                    <div class="user-item">
+                        <div class="user-avatar">${u.name[0].toUpperCase()}</div>
+                        <div class="user-info">
+                            <div class="user-name">${u.name}</div>
+                            <div class="user-email">${u.email}</div>
+                        </div>
+                        <span class="user-role">${u.role}</span>
+                    </div>
+                `).join('')}
+            `;
+        }
+    } catch (error) {
+        console.error('Erro ao carregar usuários:', error);
+    }
+}
+
+async function shareWorkspace() {
+    const email = document.getElementById('shareEmail').value.trim();
+    const role = document.getElementById('shareRole').value;
+    
+    if (!email) {
+        alert('Digite o email do usuário');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/api/workspaces/${currentWorkspaceId}/share`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, role })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            document.getElementById('shareEmail').value = '';
+            loadSharedUsers(currentWorkspaceId);
+            showNotification('✅ Convite enviado!', 'success');
+        } else {
+            showNotification('❌ ' + result.error, 'error');
+        }
+    } catch (error) {
+        showNotification('❌ Erro ao compartilhar', 'error');
+    }
+}
+
+function openPublishModal(workspaceId, dashboardId) {
+    currentWorkspaceId = workspaceId;
+    currentDashboardId = dashboardId;
+    document.getElementById('publishModal').classList.add('active');
+    document.getElementById('publishResult').style.display = 'none';
+}
+
+async function publishDashboard() {
+    const isPublic = document.getElementById('isPublic').checked;
+    
+    try {
+        const response = await fetch(`/api/workspaces/${currentWorkspaceId}/dashboards/${currentDashboardId}/publish`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ is_public: isPublic })
+        });
+        
+        const result = await response.json();
+        
+        if (result.success) {
+            document.getElementById('publicUrl').value = window.location.origin + result.public_url;
+            document.getElementById('embedCode').value = result.embed_code;
+            document.getElementById('publishResult').style.display = 'block';
+            showNotification('✅ Dashboard publicado!', 'success');
+        } else {
+            showNotification('❌ ' + result.error, 'error');
+        }
+    } catch (error) {
+        showNotification('❌ Erro ao publicar', 'error');
+    }
+}
+
+function copyLink() {
+    navigator.clipboard.writeText(document.getElementById('publicUrl').value);
+    showNotification('📋 Link copiado!', 'success');
+}
+
+function copyEmbed() {
+    navigator.clipboard.writeText(document.getElementById('embedCode').value);
+    showNotification('📋 Código copiado!', 'success');
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
+</script>
+{% endblock %}

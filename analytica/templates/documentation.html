@@ -1,0 +1,790 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="docs-container">
+    
+    <header class="page-header">
+        <h1>📚 Documentação do Projeto</h1>
+        <p>Gere documentação profissional para entregar aos seus clientes</p>
+    </header>
+
+    <div class="docs-layout">
+        
+        <!-- SIDEBAR: NAVEGAÇÃO -->
+        <aside class="docs-sidebar">
+            <h3>📑 Seções</h3>
+            <nav class="docs-nav">
+                <a href="#overview" class="nav-item active">📊 Visão Geral</a>
+                <a href="#data" class="nav-item">📁 Dados Utilizados</a>
+                <a href="#analysis" class="nav-item">🔍 Análises Realizadas</a>
+                <a href="#results" class="nav-item">📈 Resultados</a>
+                <a href="#code" class="nav-item">🐍 Código Python</a>
+                <a href="#charts" class="nav-item">📊 Visualizações</a>
+                <a href="#conclusions" class="nav-item">✅ Conclusões</a>
+                <a href="#next-steps" class="nav-item">🚀 Próximos Passos</a>
+            </nav>
+            
+            <div class="export-sidebar">
+                <h4>📥 Exportar Documentação</h4>
+                <button class="btn-export-doc" onclick="exportDocPDF()">📄 PDF</button>
+                <button class="btn-export-doc" onclick="exportDocHTML()">🌐 HTML</button>
+                <button class="btn-export-doc" onclick="exportDocMD()">📝 Markdown</button>
+                <button class="btn-export-doc" onclick="exportDocWord()">📘 Word</button>
+            </div>
+        </aside>
+
+        <!-- CONTEÚDO PRINCIPAL -->
+        <main class="docs-content">
+            
+            <!-- VISÃO GERAL -->
+            <section id="overview" class="doc-section">
+                <h2>📊 Visão Geral do Projeto</h2>
+                
+                <div class="project-info-card">
+                    <div class="info-row">
+                        <span class="info-label">Nome do Projeto:</span>
+                        <span class="info-value" contenteditable="true">Análise de Dados - Cliente XYZ</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Cliente:</span>
+                        <span class="info-value" contenteditable="true">Empresa XYZ Ltda</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Data de Criação:</span>
+                        <span class="info-value">05/12/2025</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Analista Responsável:</span>
+                        <span class="info-value" contenteditable="true">{{ user }}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Versão:</span>
+                        <span class="info-value">1.0.0</span>
+                    </div>
+                </div>
+                
+                <h3>Resumo Executivo</h3>
+                <div class="editable-content" contenteditable="true">
+                    <p>Este relatório apresenta uma análise completa dos dados fornecidos pelo cliente, incluindo tendências de crescimento, métricas de desempenho e insights estratégicos para tomada de decisão.</p>
+                    <p>Os principais destaques incluem:</p>
+                    <ul>
+                        <li>Crescimento de 48.9% no faturamento ao longo do período analisado</li>
+                        <li>Identificação de 3 segmentos principais de clientes</li>
+                        <li>Projeção de crescimento para os próximos 6 meses</li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- DADOS UTILIZADOS -->
+            <section id="data" class="doc-section">
+                <h2>📁 Dados Utilizados</h2>
+                
+                <h3>Fontes de Dados</h3>
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>Arquivo</th>
+                            <th>Tipo</th>
+                            <th>Registros</th>
+                            <th>Período</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>vendas_2025.xlsx</td>
+                            <td>Excel</td>
+                            <td>15.420</td>
+                            <td>Jan-Dez 2025</td>
+                        </tr>
+                        <tr>
+                            <td>clientes.csv</td>
+                            <td>CSV</td>
+                            <td>3.847</td>
+                            <td>Atualizado</td>
+                        </tr>
+                        <tr>
+                            <td>produtos.json</td>
+                            <td>JSON</td>
+                            <td>248</td>
+                            <td>Catálogo atual</td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <h3>Dicionário de Dados</h3>
+                <div class="code-block">
+                    <pre>
+# Principais colunas utilizadas:
+- data: Data da transação (datetime)
+- cliente_id: Identificador único do cliente (int)
+- produto_id: Identificador do produto (int)
+- valor: Valor da venda em R$ (float)
+- categoria: Categoria do produto (string)
+- regiao: Região do cliente (string)
+                    </pre>
+                </div>
+            </section>
+
+            <!-- ANÁLISES REALIZADAS -->
+            <section id="analysis" class="doc-section">
+                <h2>🔍 Análises Realizadas</h2>
+                
+                <div class="analysis-cards">
+                    <div class="analysis-card">
+                        <span class="analysis-icon">📈</span>
+                        <h4>Análise de Tendências</h4>
+                        <p>Identificação de padrões de crescimento e sazonalidade nas vendas.</p>
+                    </div>
+                    
+                    <div class="analysis-card">
+                        <span class="analysis-icon">👥</span>
+                        <h4>Segmentação de Clientes</h4>
+                        <p>Agrupamento de clientes por comportamento de compra usando K-Means.</p>
+                    </div>
+                    
+                    <div class="analysis-card">
+                        <span class="analysis-icon">🎯</span>
+                        <h4>Análise de Pareto</h4>
+                        <p>Identificação dos produtos e clientes que geram 80% da receita.</p>
+                    </div>
+                    
+                    <div class="analysis-card">
+                        <span class="analysis-icon">🔮</span>
+                        <h4>Previsão de Vendas</h4>
+                        <p>Modelo preditivo para projeção de vendas nos próximos 6 meses.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RESULTADOS -->
+            <section id="results" class="doc-section">
+                <h2>📈 Resultados</h2>
+                
+                <div class="results-grid">
+                    <div class="result-card">
+                        <span class="result-value">R$ 847.293</span>
+                        <span class="result-label">Faturamento Total</span>
+                        <span class="result-change positive">+48.9%</span>
+                    </div>
+                    
+                    <div class="result-card">
+                        <span class="result-value">12.847</span>
+                        <span class="result-label">Clientes Ativos</span>
+                        <span class="result-change positive">+23.4%</span>
+                    </div>
+                    
+                    <div class="result-card">
+                        <span class="result-value">R$ 65,90</span>
+                        <span class="result-label">Ticket Médio</span>
+                        <span class="result-change positive">+12.1%</span>
+                    </div>
+                    
+                    <div class="result-card">
+                        <span class="result-value">3.2x</span>
+                        <span class="result-label">ROI Médio</span>
+                        <span class="result-change positive">+18.5%</span>
+                    </div>
+                </div>
+                
+                <h3>Principais Insights</h3>
+                <div class="insights-list">
+                    <div class="insight-item">
+                        <span class="insight-number">1</span>
+                        <div class="insight-content">
+                            <h4>Crescimento Consistente</h4>
+                            <p>O faturamento apresentou crescimento médio de 4% ao mês, com picos em março e novembro.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-item">
+                        <span class="insight-number">2</span>
+                        <div class="insight-content">
+                            <h4>Segmento Premium</h4>
+                            <p>20% dos clientes representam 78% do faturamento, indicando forte concentração no segmento premium.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="insight-item">
+                        <span class="insight-number">3</span>
+                        <div class="insight-content">
+                            <h4>Oportunidade Regional</h4>
+                            <p>A região Nordeste apresenta potencial de crescimento de 35% com estratégia de expansão focada.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CÓDIGO PYTHON -->
+            <section id="code" class="doc-section">
+                <h2>🐍 Código Python</h2>
+                
+                <p>Abaixo está o código Python utilizado para realizar as análises:</p>
+                
+                <div class="code-block">
+                    <div class="code-header">
+                        <span>main.py</span>
+                        <button onclick="copyCode()">📋 Copiar</button>
+                    </div>
+                    <pre><code class="python"># ============================================
+# ANALYSTIC.A — Análise de Dados
+# ============================================
+import pandas as pd
+import plotly.express as px
+import numpy as np
+from sklearn.cluster import KMeans
+
+# Carregar dados
+df = pd.read_excel('vendas_2025.xlsx')
+
+# Análise estatística
+print("📊 RESUMO ESTATÍSTICO")
+print(df.describe())
+
+# Análise por região
+vendas_regiao = df.groupby('regiao')['valor'].sum()
+print("\n💰 Vendas por Região:")
+print(vendas_regiao.sort_values(ascending=False))
+
+# Segmentação de clientes
+X = df[['valor', 'quantidade']].values
+kmeans = KMeans(n_clusters=3, random_state=42)
+df['segmento'] = kmeans.fit_predict(X)
+
+# Visualização
+fig = px.line(df.groupby('mes')['valor'].sum().reset_index(),
+              x='mes', y='valor', title='Evolução de Vendas')
+fig.write_html('dashboard.html')
+
+print("\n✅ Análise concluída com sucesso!")</code></pre>
+                </div>
+            </section>
+
+            <!-- VISUALIZAÇÕES -->
+            <section id="charts" class="doc-section">
+                <h2>📊 Visualizações</h2>
+                
+                <div class="chart-gallery">
+                    <div class="gallery-item">
+                        <h4>Evolução de Vendas</h4>
+                        <div id="doc-chart-1" class="gallery-chart"></div>
+                    </div>
+                    
+                    <div class="gallery-item">
+                        <h4>Distribuição por Categoria</h4>
+                        <div id="doc-chart-2" class="gallery-chart"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CONCLUSÕES -->
+            <section id="conclusions" class="doc-section">
+                <h2>✅ Conclusões</h2>
+                
+                <div class="editable-content" contenteditable="true">
+                    <p>Com base nas análises realizadas, concluímos que:</p>
+                    
+                    <ol>
+                        <li><strong>Crescimento sólido:</strong> A empresa apresentou crescimento consistente de 48.9% no período analisado, superando a média do setor.</li>
+                        
+                        <li><strong>Base de clientes qualificada:</strong> A concentração de receita em clientes premium indica uma base sólida e oportunidades de upselling.</li>
+                        
+                        <li><strong>Potencial de expansão:</strong> Há espaço significativo para crescimento nas regiões Norte e Nordeste.</li>
+                        
+                        <li><strong>Previsão positiva:</strong> O modelo preditivo indica continuidade do crescimento para os próximos 6 meses.</li>
+                    </ol>
+                </div>
+            </section>
+
+            <!-- PRÓXIMOS PASSOS -->
+            <section id="next-steps" class="doc-section">
+                <h2>🚀 Próximos Passos</h2>
+                
+                <div class="steps-timeline">
+                    <div class="step-item">
+                        <div class="step-marker">1</div>
+                        <div class="step-content">
+                            <h4>Curto Prazo (1-3 meses)</h4>
+                            <ul>
+                                <li>Implementar dashboard em tempo real</li>
+                                <li>Configurar alertas automáticos</li>
+                                <li>Treinar equipe no uso das ferramentas</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="step-item">
+                        <div class="step-marker">2</div>
+                        <div class="step-content">
+                            <h4>Médio Prazo (3-6 meses)</h4>
+                            <ul>
+                                <li>Expandir análise para dados de marketing</li>
+                                <li>Integrar com CRM</li>
+                                <li>Desenvolver modelo de churn prediction</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="step-item">
+                        <div class="step-marker">3</div>
+                        <div class="step-content">
+                            <h4>Longo Prazo (6-12 meses)</h4>
+                            <ul>
+                                <li>Implementar IA para recomendações</li>
+                                <li>Automatizar relatórios mensais</li>
+                                <li>Expandir para análise prescritiva</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- RODAPÉ DO DOCUMENTO -->
+            <footer class="doc-footer">
+                <div class="footer-info">
+                    <p><strong>ANALYSTIC.A PRO</strong> — Plataforma Premium de Análise de Dados</p>
+                    <p>Documento gerado automaticamente em {{ now }}</p>
+                </div>
+                <div class="footer-logo">📊 ANALYSTIC.A</div>
+            </footer>
+
+        </main>
+    </div>
+
+</div>
+
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+<script>
+// Gráfico de exemplo 1
+Plotly.newPlot('doc-chart-1', [{
+    x: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+    y: [45000, 52000, 48000, 61000, 55000, 67000],
+    type: 'scatter',
+    mode: 'lines+markers',
+    fill: 'tozeroy',
+    line: { color: '#00d4ff' }
+}], {
+    paper_bgcolor: 'transparent',
+    plot_bgcolor: 'transparent',
+    font: { color: '#e0e0e0' },
+    margin: { l: 40, r: 20, t: 20, b: 40 }
+}, { responsive: true });
+
+// Gráfico de exemplo 2
+Plotly.newPlot('doc-chart-2', [{
+    values: [35, 25, 20, 15, 5],
+    labels: ['Varejo', 'Serviços', 'Tech', 'Indústria', 'Outros'],
+    type: 'pie',
+    hole: 0.4,
+    marker: { colors: ['#00d4ff', '#7c3aed', '#10b981', '#f59e0b', '#ef4444'] }
+}], {
+    paper_bgcolor: 'transparent',
+    font: { color: '#e0e0e0' },
+    margin: { l: 20, r: 20, t: 20, b: 20 },
+    showlegend: false
+}, { responsive: true });
+
+// Navegação suave
+document.querySelectorAll('.docs-nav a').forEach(link => {
+    link.addEventListener('click', function(e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        target.scrollIntoView({ behavior: 'smooth' });
+        
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        this.classList.add('active');
+    });
+});
+
+// Exportações
+function exportDocPDF() {
+    showNotification('Gerando PDF...', 'info');
+    window.print();
+}
+
+function exportDocHTML() {
+    showNotification('Exportando HTML...', 'info');
+}
+
+function exportDocMD() {
+    showNotification('Exportando Markdown...', 'info');
+}
+
+function exportDocWord() {
+    showNotification('Exportando Word...', 'info');
+}
+
+function copyCode() {
+    const code = document.querySelector('.code-block code').textContent;
+    navigator.clipboard.writeText(code);
+    showNotification('Código copiado!', 'success');
+}
+
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
+</script>
+
+<style>
+.docs-container {
+    padding: 30px;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.docs-layout {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 30px;
+}
+
+.docs-sidebar {
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+}
+
+.docs-sidebar h3 {
+    font-size: 1rem;
+    margin-bottom: 15px;
+    color: var(--text-muted);
+}
+
+.docs-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.nav-item {
+    padding: 10px 15px;
+    border-radius: 8px;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.2s;
+}
+
+.nav-item:hover, .nav-item.active {
+    background: var(--bg-secondary);
+    color: var(--accent-color);
+}
+
+.export-sidebar {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
+}
+
+.export-sidebar h4 {
+    font-size: 0.9rem;
+    margin-bottom: 15px;
+}
+
+.btn-export-doc {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-export-doc:hover {
+    background: var(--accent-color);
+    color: white;
+}
+
+.docs-content {
+    background: var(--bg-secondary);
+    border-radius: 16px;
+    padding: 40px;
+}
+
+.doc-section {
+    margin-bottom: 50px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.doc-section h2 {
+    font-size: 1.8rem;
+    margin-bottom: 25px;
+    color: var(--accent-color);
+}
+
+.doc-section h3 {
+    font-size: 1.2rem;
+    margin: 25px 0 15px;
+}
+
+.project-info-card {
+    background: var(--bg-tertiary);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+}
+
+.info-row {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.info-row:last-child { border-bottom: none; }
+
+.info-label {
+    width: 200px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.info-value {
+    flex: 1;
+}
+
+.editable-content {
+    line-height: 1.8;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px dashed var(--border-color);
+}
+
+.editable-content:focus {
+    outline: none;
+    border-color: var(--accent-color);
+}
+
+.data-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+}
+
+.data-table th, .data-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border: 1px solid var(--border-color);
+}
+
+.data-table th {
+    background: var(--bg-tertiary);
+    font-weight: 600;
+}
+
+.code-block {
+    background: #1e1e2e;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 20px 0;
+}
+
+.code-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 15px;
+    background: #2d2d3d;
+    font-size: 0.85rem;
+}
+
+.code-block pre {
+    padding: 20px;
+    margin: 0;
+    overflow-x: auto;
+    font-family: 'Fira Code', monospace;
+    font-size: 0.9rem;
+    line-height: 1.6;
+}
+
+.analysis-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+}
+
+.analysis-card {
+    background: var(--bg-tertiary);
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.analysis-icon { font-size: 2.5rem; }
+.analysis-card h4 { margin: 15px 0 10px; }
+.analysis-card p { color: var(--text-muted); font-size: 0.9rem; }
+
+.results-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.result-card {
+    background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.result-value {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+.result-label {
+    display: block;
+    margin: 10px 0;
+    color: var(--text-muted);
+}
+
+.result-change {
+    font-size: 0.9rem;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.result-change.positive {
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+}
+
+.insights-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.insight-item {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    background: var(--bg-tertiary);
+    border-radius: 12px;
+}
+
+.insight-number {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-color);
+    color: white;
+    border-radius: 50%;
+    font-weight: 700;
+}
+
+.insight-content h4 { margin: 0 0 10px; }
+.insight-content p { margin: 0; color: var(--text-secondary); }
+
+.chart-gallery {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 25px;
+}
+
+.gallery-item {
+    background: var(--bg-tertiary);
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.gallery-item h4 { margin: 0 0 15px; text-align: center; }
+.gallery-chart { height: 250px; }
+
+.steps-timeline {
+    position: relative;
+    padding-left: 40px;
+}
+
+.steps-timeline::before {
+    content: '';
+    position: absolute;
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: var(--border-color);
+}
+
+.step-item {
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.step-marker {
+    position: absolute;
+    left: -40px;
+    width: 30px;
+    height: 30px;
+    background: var(--accent-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    color: white;
+}
+
+.step-content {
+    background: var(--bg-tertiary);
+    padding: 20px;
+    border-radius: 12px;
+}
+
+.step-content h4 { margin: 0 0 15px; }
+.step-content ul { margin: 0; padding-left: 20px; }
+.step-content li { margin-bottom: 8px; }
+
+.doc-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 30px;
+    margin-top: 30px;
+    border-top: 2px solid var(--border-color);
+}
+
+.footer-info p {
+    margin: 5px 0;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.footer-logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--accent-color);
+}
+
+@media print {
+    .docs-sidebar { display: none; }
+    .docs-layout { grid-template-columns: 1fr; }
+    .editable-content { border: none; }
+}
+
+@media (max-width: 768px) {
+    .docs-layout { grid-template-columns: 1fr; }
+    .docs-sidebar { display: none; }
+    .results-grid { grid-template-columns: repeat(2, 1fr); }
+    .chart-gallery { grid-template-columns: 1fr; }
+}
+</style>
+{% endblock %}

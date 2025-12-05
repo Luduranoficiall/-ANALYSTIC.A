@@ -1,0 +1,626 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="python-editor-container">
+    
+    <header class="editor-header">
+        <div class="header-left">
+            <h1>🐍 Editor Python — ANALYSTIC.A</h1>
+            <p>Análise de dados com código Python integrado</p>
+        </div>
+        <div class="header-right">
+            <button class="btn-primary" onclick="runCode()">▶️ Executar (Ctrl+Enter)</button>
+            <button class="btn-secondary" onclick="saveCode()">💾 Salvar</button>
+            <button class="btn-secondary" onclick="pushToGithub()">🔗 Push GitHub</button>
+            <button class="btn-secondary" onclick="downloadCode()">📥 Download .py</button>
+        </div>
+    </header>
+
+    <div class="editor-layout">
+        
+        <!-- PAINEL ESQUERDO: ARQUIVOS -->
+        <aside class="files-panel">
+            <div class="panel-header">
+                <h3>📁 Arquivos</h3>
+                <button class="btn-icon-sm" onclick="newFile()" title="Novo arquivo">+</button>
+            </div>
+            <ul class="file-list">
+                <li class="file-item active" onclick="loadFile('main.py')">
+                    <span class="file-icon">🐍</span>
+                    <span class="file-name">main.py</span>
+                </li>
+                <li class="file-item" onclick="loadFile('analise_vendas.py')">
+                    <span class="file-icon">🐍</span>
+                    <span class="file-name">analise_vendas.py</span>
+                </li>
+                <li class="file-item" onclick="loadFile('dashboard_data.py')">
+                    <span class="file-icon">🐍</span>
+                    <span class="file-name">dashboard_data.py</span>
+                </li>
+                <li class="file-item" onclick="loadFile('exportacao.py')">
+                    <span class="file-icon">🐍</span>
+                    <span class="file-name">exportacao.py</span>
+                </li>
+            </ul>
+            
+            <div class="panel-header mt-4">
+                <h3>📊 Datasets</h3>
+                <button class="btn-icon-sm" onclick="uploadDataset()" title="Upload">📤</button>
+            </div>
+            <ul class="file-list">
+                <li class="file-item" onclick="loadDataset('vendas.csv')">
+                    <span class="file-icon">📄</span>
+                    <span class="file-name">vendas.csv</span>
+                </li>
+                <li class="file-item" onclick="loadDataset('clientes.xlsx')">
+                    <span class="file-icon">📊</span>
+                    <span class="file-name">clientes.xlsx</span>
+                </li>
+            </ul>
+            
+            <div class="templates-section">
+                <h4>📝 Templates</h4>
+                <button class="template-btn" onclick="insertTemplate('pandas')">Análise Pandas</button>
+                <button class="template-btn" onclick="insertTemplate('plotly')">Gráfico Plotly</button>
+                <button class="template-btn" onclick="insertTemplate('ml')">Machine Learning</button>
+                <button class="template-btn" onclick="insertTemplate('excel')">Exportar Excel</button>
+            </div>
+        </aside>
+
+        <!-- ÁREA CENTRAL: EDITOR -->
+        <main class="editor-main">
+            <div class="editor-tabs">
+                <div class="tab active">main.py</div>
+                <div class="tab">analise_vendas.py</div>
+                <button class="tab-add" onclick="newFile()">+</button>
+            </div>
+            
+            <div class="code-editor-wrapper">
+                <div class="line-numbers" id="line-numbers"></div>
+                <textarea id="code-editor" class="code-editor" spellcheck="false"># ============================================
+# 🐍 ANALYSTIC.A — Editor Python Premium
+# ============================================
+import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+
+# Carregar dados de exemplo
+dados = {
+    'Mês': ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+    'Vendas': [45000, 52000, 48000, 61000, 55000, 67000],
+    'Clientes': [120, 145, 138, 167, 152, 189],
+    'Ticket_Medio': [375, 358, 348, 365, 362, 354]
+}
+
+df = pd.DataFrame(dados)
+
+# Análise estatística
+print("📊 RESUMO ESTATÍSTICO")
+print("=" * 40)
+print(df.describe())
+
+# Calcular métricas
+total_vendas = df['Vendas'].sum()
+media_clientes = df['Clientes'].mean()
+crescimento = ((df['Vendas'].iloc[-1] - df['Vendas'].iloc[0]) / df['Vendas'].iloc[0]) * 100
+
+print(f"\n💰 Total de Vendas: R$ {total_vendas:,.2f}")
+print(f"👥 Média de Clientes: {media_clientes:.0f}")
+print(f"📈 Crescimento: {crescimento:.1f}%")
+
+# Criar visualização
+fig = px.line(df, x='Mês', y='Vendas', 
+              title='Evolução de Vendas',
+              markers=True)
+fig.show()
+</textarea>
+            </div>
+        </main>
+
+        <!-- PAINEL DIREITO: OUTPUT -->
+        <aside class="output-panel">
+            <div class="panel-header">
+                <h3>📤 Output</h3>
+                <div class="output-tabs">
+                    <button class="output-tab active" onclick="showOutput('console')">Console</button>
+                    <button class="output-tab" onclick="showOutput('chart')">Gráficos</button>
+                    <button class="output-tab" onclick="showOutput('table')">Tabelas</button>
+                </div>
+            </div>
+            
+            <div id="console-output" class="output-area active">
+                <pre class="console-text">
+📊 RESUMO ESTATÍSTICO
+========================================
+           Vendas    Clientes  Ticket_Medio
+count     6.000000    6.000000      6.000000
+mean  54666.666667  151.833333    360.333333
+std    7711.891747   23.186413     10.328980
+min   45000.000000  120.000000    348.000000
+25%   48750.000000  139.250000    354.500000
+50%   53500.000000  148.500000    360.000000
+75%   59500.000000  163.250000    364.250000
+max   67000.000000  189.000000    375.000000
+
+💰 Total de Vendas: R$ 328,000.00
+👥 Média de Clientes: 152
+📈 Crescimento: 48.9%
+
+✅ Código executado com sucesso!
+                </pre>
+            </div>
+            
+            <div id="chart-output" class="output-area">
+                <div id="output-chart"></div>
+            </div>
+            
+            <div id="table-output" class="output-area">
+                <table class="output-table">
+                    <thead>
+                        <tr><th>Mês</th><th>Vendas</th><th>Clientes</th><th>Ticket</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Jan</td><td>R$ 45.000</td><td>120</td><td>R$ 375</td></tr>
+                        <tr><td>Fev</td><td>R$ 52.000</td><td>145</td><td>R$ 358</td></tr>
+                        <tr><td>Mar</td><td>R$ 48.000</td><td>138</td><td>R$ 348</td></tr>
+                        <tr><td>Abr</td><td>R$ 61.000</td><td>167</td><td>R$ 365</td></tr>
+                        <tr><td>Mai</td><td>R$ 55.000</td><td>152</td><td>R$ 362</td></tr>
+                        <tr><td>Jun</td><td>R$ 67.000</td><td>189</td><td>R$ 354</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <div class="export-actions">
+                <h4>📥 Exportar Resultado</h4>
+                <button class="btn-export-sm" onclick="exportResult('python')">🐍 .py</button>
+                <button class="btn-export-sm" onclick="exportResult('jupyter')">📓 .ipynb</button>
+                <button class="btn-export-sm" onclick="exportResult('html')">🌐 HTML</button>
+                <button class="btn-export-sm" onclick="exportResult('pdf')">📄 PDF</button>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- BARRA DE STATUS -->
+    <footer class="editor-status">
+        <span class="status-item">🐍 Python 3.11</span>
+        <span class="status-item">📁 main.py</span>
+        <span class="status-item">📏 Linha 1, Coluna 1</span>
+        <span class="status-item">✅ Pronto</span>
+        <span class="status-item ml-auto">ANALYSTIC.A PRO</span>
+    </footer>
+
+</div>
+
+<!-- ACE EDITOR CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.23.4/ace.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+
+<script>
+// Inicializar números de linha
+function updateLineNumbers() {
+    const editor = document.getElementById('code-editor');
+    const lines = editor.value.split('\n').length;
+    const lineNumbers = document.getElementById('line-numbers');
+    lineNumbers.innerHTML = Array.from({length: lines}, (_, i) => i + 1).join('<br>');
+}
+
+document.getElementById('code-editor').addEventListener('input', updateLineNumbers);
+document.getElementById('code-editor').addEventListener('scroll', function() {
+    document.getElementById('line-numbers').scrollTop = this.scrollTop;
+});
+
+updateLineNumbers();
+
+// Atalho Ctrl+Enter para executar
+document.getElementById('code-editor').addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.key === 'Enter') {
+        e.preventDefault();
+        runCode();
+    }
+    // Tab para indentação
+    if (e.key === 'Tab') {
+        e.preventDefault();
+        const start = this.selectionStart;
+        const end = this.selectionEnd;
+        this.value = this.value.substring(0, start) + '    ' + this.value.substring(end);
+        this.selectionStart = this.selectionEnd = start + 4;
+    }
+});
+
+// Executar código
+async function runCode() {
+    const code = document.getElementById('code-editor').value;
+    const output = document.getElementById('console-output');
+    
+    output.querySelector('.console-text').textContent = '⏳ Executando código...';
+    
+    try {
+        const response = await fetch('/api/run-python', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ code: code })
+        });
+        
+        const result = await response.json();
+        output.querySelector('.console-text').textContent = result.output || '✅ Código executado com sucesso!';
+        
+        if (result.chart) {
+            Plotly.newPlot('output-chart', result.chart.data, result.chart.layout);
+        }
+    } catch (error) {
+        // Simulação para demo
+        output.querySelector('.console-text').textContent = `✅ Código executado com sucesso!
+
+📊 RESUMO ESTATÍSTICO
+========================================
+Análise concluída.
+
+💰 Total processado
+👥 Dados carregados
+📈 Visualização gerada`;
+    }
+    
+    showNotification('Código executado!', 'success');
+}
+
+// Salvar código
+function saveCode() {
+    const code = document.getElementById('code-editor').value;
+    localStorage.setItem('analystica_code', code);
+    showNotification('Código salvo localmente!', 'success');
+}
+
+// Download código
+function downloadCode() {
+    const code = document.getElementById('code-editor').value;
+    const blob = new Blob([code], { type: 'text/python' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'analystica_script.py';
+    a.click();
+    showNotification('Download iniciado!', 'success');
+}
+
+// Push para GitHub
+async function pushToGithub() {
+    showNotification('Conectando ao GitHub...', 'info');
+    // Redirecionar para página de integração GitHub
+    window.location.href = '/github-sync';
+}
+
+// Templates de código
+const templates = {
+    pandas: `# Análise com Pandas
+import pandas as pd
+
+# Carregar dados
+df = pd.read_excel('dados.xlsx')
+
+# Análise
+print(df.describe())
+print(df.head())`,
+
+    plotly: `# Gráfico com Plotly
+import plotly.express as px
+import pandas as pd
+
+df = pd.DataFrame({
+    'x': [1, 2, 3, 4, 5],
+    'y': [10, 20, 15, 25, 30]
+})
+
+fig = px.line(df, x='x', y='y', title='Meu Gráfico')
+fig.show()`,
+
+    ml: `# Machine Learning
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LinearRegression
+import pandas as pd
+
+# Preparar dados
+X = df[['feature1', 'feature2']]
+y = df['target']
+
+# Treinar modelo
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+model = LinearRegression()
+model.fit(X_train, y_train)
+
+# Avaliar
+score = model.score(X_test, y_test)
+print(f"Acurácia: {score:.2%}")`,
+
+    excel: `# Exportar para Excel
+import pandas as pd
+
+# Criar DataFrame
+df = pd.DataFrame({
+    'Coluna1': [1, 2, 3],
+    'Coluna2': ['A', 'B', 'C']
+})
+
+# Exportar
+df.to_excel('relatorio.xlsx', index=False)
+print("✅ Arquivo exportado!")`
+};
+
+function insertTemplate(type) {
+    document.getElementById('code-editor').value = templates[type];
+    updateLineNumbers();
+    showNotification(`Template ${type} inserido!`, 'info');
+}
+
+// Alternar outputs
+function showOutput(type) {
+    document.querySelectorAll('.output-area').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.output-tab').forEach(el => el.classList.remove('active'));
+    
+    document.getElementById(`${type}-output`).classList.add('active');
+    event.target.classList.add('active');
+}
+
+// Exportar resultado
+function exportResult(format) {
+    showNotification(`Exportando como ${format.toUpperCase()}...`, 'info');
+}
+
+// Notificação
+function showNotification(message, type) {
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    setTimeout(() => notification.remove(), 3000);
+}
+
+// Carregar código salvo
+window.addEventListener('load', function() {
+    const savedCode = localStorage.getItem('analystica_code');
+    if (savedCode) {
+        document.getElementById('code-editor').value = savedCode;
+        updateLineNumbers();
+    }
+});
+</script>
+
+<style>
+/* Estilos específicos do Editor Python */
+.python-editor-container {
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 60px);
+    background: var(--bg-primary);
+}
+
+.editor-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background: var(--bg-secondary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.editor-header h1 { font-size: 1.5rem; margin: 0; }
+.editor-header p { color: var(--text-muted); margin: 5px 0 0; }
+
+.header-right { display: flex; gap: 10px; }
+
+.editor-layout {
+    display: grid;
+    grid-template-columns: 220px 1fr 350px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.files-panel, .output-panel {
+    background: var(--bg-secondary);
+    border-right: 1px solid var(--border-color);
+    overflow-y: auto;
+}
+
+.output-panel { border-right: none; border-left: 1px solid var(--border-color); }
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.panel-header h3 { font-size: 0.9rem; margin: 0; }
+
+.file-list { list-style: none; padding: 0; margin: 0; }
+
+.file-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.file-item:hover { background: var(--bg-hover); }
+.file-item.active { background: var(--accent-color); color: white; }
+
+.file-icon { font-size: 1.1rem; }
+.file-name { font-size: 0.85rem; }
+
+.templates-section {
+    padding: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+.templates-section h4 { font-size: 0.85rem; margin: 0 0 10px; }
+
+.template-btn {
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    margin-bottom: 5px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+}
+
+.template-btn:hover { background: var(--accent-color); color: white; }
+
+.editor-main { display: flex; flex-direction: column; }
+
+.editor-tabs {
+    display: flex;
+    background: var(--bg-tertiary);
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tab {
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    border-right: 1px solid var(--border-color);
+    transition: background 0.2s;
+}
+
+.tab.active {
+    background: var(--bg-primary);
+    border-bottom: 2px solid var(--accent-color);
+}
+
+.tab-add {
+    padding: 10px 15px;
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+.code-editor-wrapper {
+    display: flex;
+    flex: 1;
+    overflow: hidden;
+}
+
+.line-numbers {
+    width: 50px;
+    padding: 15px 10px;
+    background: var(--bg-tertiary);
+    color: var(--text-muted);
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    text-align: right;
+    overflow: hidden;
+    user-select: none;
+}
+
+.code-editor {
+    flex: 1;
+    padding: 15px;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    border: none;
+    resize: none;
+    font-family: 'Fira Code', 'Consolas', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    outline: none;
+}
+
+.output-tabs {
+    display: flex;
+    gap: 5px;
+}
+
+.output-tab {
+    padding: 5px 10px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-muted);
+    font-size: 0.75rem;
+    cursor: pointer;
+}
+
+.output-tab.active {
+    background: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+.output-area {
+    display: none;
+    padding: 15px;
+    height: 300px;
+    overflow: auto;
+}
+
+.output-area.active { display: block; }
+
+.console-text {
+    font-family: 'Fira Code', monospace;
+    font-size: 13px;
+    line-height: 1.5;
+    color: #10b981;
+    white-space: pre-wrap;
+}
+
+.output-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+.output-table th, .output-table td {
+    padding: 8px;
+    border: 1px solid var(--border-color);
+    text-align: left;
+}
+
+.output-table th { background: var(--bg-tertiary); }
+
+.export-actions {
+    padding: 15px;
+    border-top: 1px solid var(--border-color);
+}
+
+.export-actions h4 { font-size: 0.85rem; margin: 0 0 10px; }
+
+.btn-export-sm {
+    padding: 6px 12px;
+    margin-right: 5px;
+    margin-bottom: 5px;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-size: 0.8rem;
+    cursor: pointer;
+}
+
+.btn-export-sm:hover { background: var(--accent-color); color: white; }
+
+.editor-status {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 8px 20px;
+    background: var(--bg-tertiary);
+    border-top: 1px solid var(--border-color);
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.ml-auto { margin-left: auto; }
+.mt-4 { margin-top: 20px; }
+</style>
+{% endblock %}

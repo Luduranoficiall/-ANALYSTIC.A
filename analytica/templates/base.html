@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ title }} — ANALYSTIC.A PRO ULTRA SECURE</title>
+    <title>{{ title }} — ANALYSTIC.A PRO</title>
 
     <!-- CSS -->
     <link rel="stylesheet" href="/static/style.css">
     <link rel="stylesheet" href="/static/ui.css">
+    <link rel="stylesheet" href="/static/powerbi.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- PWA -->
     <link rel="manifest" href="/static/manifest.json">
@@ -21,13 +25,17 @@
     <!-- SIDEBAR -->
     <aside class="sidebar">
         <div class="sidebar-header">
-            <h1>ANALYSTIC.A <span>PRO</span></h1>
-            <p>ULTRA SECURE</p>
+            <h1>📊 ANALYSTIC<span>.A</span></h1>
+            <p>POWER BI KILLER</p>
         </div>
 
         <nav class="menu">
-            <a href="/" class="menu-item">🏠 Dashboard</a>
-            <a href="/members" class="menu-item">👥 Membros</a>
+            <a href="/" class="menu-item active">🏠 Início</a>
+            <a href="/workspace" class="menu-item">📊 Workspace</a>
+            <a href="/workspaces" class="menu-item">👥 Workspaces</a>
+            <a href="/data-model" class="menu-item">🔗 Modelo de Dados</a>
+            <a href="/publish" class="menu-item">📤 Publicar</a>
+            <a href="/members" class="menu-item">👤 Membros</a>
             <a href="/growth" class="menu-item">📈 Crescimento</a>
             <a href="/cashback" class="menu-item">💸 Cashback</a>
             <a href="/partners" class="menu-item">🤝 Parceiros</a>
@@ -36,6 +44,13 @@
             <a href="/revenue" class="menu-item">💼 Faturamento</a>
             <a href="/predict" class="menu-item">🤖 PREDITIVI.A</a>
             <a href="/upload" class="menu-item">⬆ Upload</a>
+            
+            <div class="menu-divider">🔧 FERRAMENTAS PRO</div>
+            <a href="/python-editor" class="menu-item premium">🐍 Editor Python</a>
+            <a href="/exports" class="menu-item premium">📦 Exportar</a>
+            <a href="/github" class="menu-item premium">🔗 GitHub Sync</a>
+            <a href="/documentation" class="menu-item premium">📚 Documentação</a>
+            <a href="/settings" class="menu-item premium">⚙️ Configurações</a>
         </nav>
 
         <!-- BOTÃO DE TEMA -->
