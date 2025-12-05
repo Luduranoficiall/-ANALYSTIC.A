@@ -1,7 +1,13 @@
 ## ============================================
 ## file: app.py — ANALYSTIC.A PRO ULTRA SECURE
 ## ============================================
+import os
 import uvicorn
+from dotenv import load_dotenv
+
+# Carregar variáveis de ambiente do arquivo .env (SEGURO!)
+load_dotenv()
+
 from fastapi import FastAPI, Request, Depends, UploadFile, File, Form
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
