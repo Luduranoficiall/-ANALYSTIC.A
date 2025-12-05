@@ -8,16 +8,14 @@
 
 ### 🌐 **ACESSE A PLATAFORMA**
 
-# 🔗 [**analystic-a.vercel.app**](https://analystic-a.vercel.app) *(em breve)*
-
-> ⚠️ **Demonstração Local:** Enquanto o domínio oficial não está configurado, o sistema está rodando em `http://localhost:8888`
+# 🔗 [**http://localhost:8888**](http://localhost:8888)
 
 ---
 
 **A plataforma de Business Intelligence mais avançada do Brasil.**  
 **Transforme seus dados em decisões inteligentes com IA integrada.**
 
-[✨ Começar Grátis](https://analystic-a.vercel.app) • [📚 Documentação](#documentação) • [💬 Suporte](#suporte)
+[✨ Acessar Plataforma](http://localhost:8888) • [📚 Documentação](#documentação) • [💬 Suporte](#suporte)
 
 </div>
 
