@@ -93,6 +93,15 @@ def login_user(email: str, password: str):
     return create_access_token({"sub": email, "name": user.get("name", "User")})
 
 
+def verify_token(token: str):
+    """Verifica e decodifica um token JWT"""
+    try:
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        return payload
+    except JWTError:
+        return None
+
+
 def get_current_user(request: Request):
     """Retorna o usuário atual ou None se não autenticado"""
     token = request.cookies.get("access_token")
@@ -112,3 +121,36 @@ def get_current_user_or_redirect(request: Request):
     if not user:
         return RedirectResponse("/login", status_code=302)
     return user
+
+
+def get_user_info(email: str) -> dict:
+    """Retorna informações do usuário"""
+    user = USERS.get(email.lower().strip())
+    if user:
+        return {
+            "email": email,
+            "name": user.get("name", "Usuário"),
+            "role": user.get("role", "user")
+        }
+    return None
+
+
+def change_password(email: str, old_password: str, new_password: str) -> dict:
+    """Altera a senha do usuário"""
+    global USERS
+    email = email.lower().strip()
+    
+    user = USERS.get(email)
+    if not user:
+        return {"success": False, "error": "Usuário não encontrado"}
+    
+    # Verificar senha atual
+    hashed = _hash_password(old_password)
+    if user["password"] != hashed and user["password"] != old_password:
+        return {"success": False, "error": "Senha atual incorreta"}
+    
+    # Atualizar senha
+    USERS[email]["password"] = _hash_password(new_password)
+    _save_users(USERS)
+    
+    return {"success": True, "message": "Senha alterada com sucesso"}

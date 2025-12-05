@@ -2,11 +2,13 @@
 ## file: app.py — ANALYSTIC.A PRO ULTRA SECURE
 ## ============================================
 import uvicorn
-from fastapi import FastAPI, Request, Depends, UploadFile, File, HTTPException, Form
+from fastapi import FastAPI, Request, Depends, UploadFile, File, Form
 from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import RequestValidationError
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 # Imports locais (relativos ao pacote analytica)
 from security.auth import get_current_user_or_redirect, login_user, register_user
@@ -42,6 +44,34 @@ app.add_middleware(
 
 
 # ======================================================
+# TRATAMENTO GLOBAL DE ERROS
+# ======================================================
+@app.exception_handler(StarletteHTTPException)
+async def http_exception_handler(request: Request, exc: StarletteHTTPException):
+    """Handler para erros HTTP"""
+    if exc.status_code == 404:
+        return templates.TemplateResponse("landing.html", {
+            "request": request,
+            "error": "Página não encontrada"
+        }, status_code=404)
+    return templates.TemplateResponse("landing.html", {
+        "request": request,
+        "error": f"Erro {exc.status_code}: {exc.detail}"
+    }, status_code=exc.status_code)
+
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """Handler para erros de validação"""
+    return {"error": "Dados inválidos", "details": str(exc)}
+
+@app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    """Handler genérico para erros não tratados"""
+    print(f"❌ Erro não tratado: {exc}")
+    return {"error": "Erro interno do servidor", "message": str(exc)}
+
+
+# ======================================================
 # METRICS (PROMETHEUS)
 # ======================================================
 @app.get("/metrics")
@@ -65,7 +95,7 @@ def landing_page(request: Request):
             user = verify_token(token)
             if user:
                 return RedirectResponse("/dashboard", status_code=302)
-        except:
+        except Exception:
             pass
     return templates.TemplateResponse("landing.html", {"request": request})
 
@@ -113,7 +143,18 @@ def login(request: Request, email: str = Form(...), password: str = Form(...)):
         })
 
     response = RedirectResponse("/dashboard", status_code=302)
-    response.set_cookie("access_token", token, httponly=True, max_age=7200)
+    response.set_cookie("access_token", token, httponly=True, max_age=7200, samesite="lax")
+    return response
+
+
+# ======================================================
+# LOGOUT
+# ======================================================
+@app.get("/logout")
+def logout():
+    """Faz logout do usuário"""
+    response = RedirectResponse("/", status_code=302)
+    response.delete_cookie("access_token")
     return response
 
 
@@ -252,7 +293,7 @@ async def ai_status():
                     "models": models,
                     "active_model": "gemma:2b" if "gemma:2b" in models else models[0] if models else None
                 }
-    except:
+    except Exception:
         pass
     
     # Verifica Gemini
