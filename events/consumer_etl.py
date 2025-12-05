@@ -1,4 +1,6 @@
-import redis, json
+import json
+import redis
+
 from analytica.etl.etl_engine import run_etl
 
 r = redis.Redis(host="redis", port=6379)

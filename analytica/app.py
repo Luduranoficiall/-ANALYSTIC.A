@@ -1,33 +1,33 @@
-from prometheus_client import Counter, Histogram, generate_latest
-from fastapi.responses import Response
-
-REQUEST_COUNT = Counter("requests_total", "Total Requests")
-LATENCY = Histogram("request_latency_seconds", "Request latency")
-@app.get("/metrics")
-def metrics():
-    return Response(generate_latest(), media_type="text/plain")
 ## ============================================
-## file: app.py — ANALYSTIC.A
+## file: app.py — ANALYSTIC.A PRO ULTRA SECURE
 ## ============================================
+import uvicorn
 from fastapi import FastAPI, Request, Depends, UploadFile, File, HTTPException
-from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
-# Imports corrigidos para pacotes absolutos
-from analystic_a.security.auth import get_current_user, login_user
-from analystic_a.etl.etl_engine import process_excel
-from analystic_a.charts.chart_engine import generate_chart
-from analystic_a.gpt.gpt_engine import generate_insights
-from analystic_a.db.database import get_db
-# Importa LoginSchema corretamente
-from analystic_a.schemas import LoginSchema
-import uvicorn
-import os
-import json
 
+# Imports locais (relativos ao pacote analytica)
+from security.auth import get_current_user, login_user
+from etl.etl_engine import process_excel
+from charts.chart_engine import generate_chart
+from gpt.gpt_engine import generate_insights
+from schemas import LoginSchema
 
-app = FastAPI(title="ANALYSTIC.A — Power BI + GPT")
+# Prometheus (opcional, apenas se instalado)
+try:
+    from prometheus_client import Counter, Histogram, generate_latest
+    PROMETHEUS_ENABLED = True
+    REQUEST_COUNT = Counter("requests_total", "Total Requests")
+    LATENCY = Histogram("request_latency_seconds", "Request latency")
+except ImportError:
+    PROMETHEUS_ENABLED = False
+
+# ======================================================
+# FASTAPI APP
+# ======================================================
+app = FastAPI(title="ANALYSTIC.A PRO ULTRA SECURE — Power BI + GPT")
 
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
@@ -40,6 +40,16 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# ======================================================
+# METRICS (PROMETHEUS)
+# ======================================================
+@app.get("/metrics")
+def metrics():
+    if PROMETHEUS_ENABLED:
+        return Response(generate_latest(), media_type="text/plain")
+    return {"status": "prometheus not installed"}
 
 
 # ======================================================
@@ -102,7 +112,15 @@ def insights(question: str, user=Depends(get_current_user)):
 
 
 # ======================================================
+# PREDICT (PREDITIVI.A)
+# ======================================================
+@app.get("/predict", response_class=HTMLResponse)
+def predict_page(request: Request, user=Depends(get_current_user)):
+    return templates.TemplateResponse("predict.html", {"request": request})
+
+
+# ======================================================
 # RUN
 # ======================================================
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8080)
+    uvicorn.run("app:app", host="0.0.0.0", port=8080, reload=True)

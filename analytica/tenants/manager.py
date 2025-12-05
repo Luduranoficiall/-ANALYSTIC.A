@@ -1,5 +1,5 @@
 from fastapi import Request
-import os
+
 
 async def tenant_middleware(request: Request, call_next):
     tenant = request.headers.get("X-TENANT")

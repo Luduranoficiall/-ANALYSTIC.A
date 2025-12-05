@@ -1,5 +1,6 @@
 from cryptography.hazmat.primitives.asymmetric import rsa, padding
-from cryptography.hazmat.primitives import serialization, hashes
+from cryptography.hazmat.primitives import hashes
+
 
 # Geração das chaves
 def generate_keys():

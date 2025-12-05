@@ -1,4 +1,10 @@
 import plotly.graph_objects as go
+import sys
+import os
+
+# Adiciona o diretório raiz de analytica ao path
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
 from db.database import get_db
 
 
