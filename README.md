@@ -1,6 +1,42 @@
-# ANALYTIC.A PRO ULTRA SECURE
+# 📊 ANALYSTIC.A — Premium Analytics Platform
 
-## 📘 1. MANUAL TÉCNICO DO DESENVOLVEDOR (Dev Manual)
+<div align="center">
+
+![ANALYSTIC.A](https://img.shields.io/badge/ANALYSTIC.A-Premium%20Analytics-667eea?style=for-the-badge&logo=chartdotjs&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Online-00d4aa?style=for-the-badge)
+![Version](https://img.shields.io/badge/Versão-2.0-f093fb?style=for-the-badge)
+
+### 🌐 **ACESSE A PLATAFORMA**
+
+# 🔗 [**analystic-a.vercel.app**](https://analystic-a.vercel.app) *(em breve)*
+
+> ⚠️ **Demonstração Local:** Enquanto o domínio oficial não está configurado, o sistema está rodando em `http://localhost:8888`
+
+---
+
+**A plataforma de Business Intelligence mais avançada do Brasil.**  
+**Transforme seus dados em decisões inteligentes com IA integrada.**
+
+[✨ Começar Grátis](https://analystic-a.vercel.app) • [📚 Documentação](#documentação) • [💬 Suporte](#suporte)
+
+</div>
+
+---
+
+## 🚀 Recursos Principais
+
+| Recurso | Descrição |
+|---------|-----------|
+| 🤖 **IA Integrada** | Ollama + Gemini 1.5 Flash para análises preditivas |
+| 📊 **Dashboards Dinâmicos** | Visualizações interativas com drag & drop |
+| 🔗 **Modelagem de Dados** | Relacionamentos visuais estilo Power BI |
+| 👥 **Colaboração** | Workspaces compartilhados em tempo real |
+| 🐍 **Python Nativo** | Execute scripts diretamente na plataforma |
+| 🔒 **Segurança Enterprise** | Criptografia end-to-end + LGPD |
+
+---
+
+## 📘 MANUAL TÉCNICO DO DESENVOLVEDOR (Dev Manual)
 
 ### 1. Introdução
 Este documento descreve todos os componentes técnicos do sistema ANALYTIC.A PRO ULTRA SECURE, sua arquitetura, padrões de desenvolvimento, requisitos, pipelines, APIs e melhores práticas de manutenção.
