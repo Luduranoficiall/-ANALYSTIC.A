@@ -45,7 +45,7 @@
 [👤 Criado por](https://www.luduranoficiall.com) • Desenvolvedor: Luduranoficiall • [WhatsApp](https://wa.me/5512996182268)
 
 
-[✨ Acessar Plataforma (Fly.io)](https://analystica.fly.dev) • [📚 Documentação](#documentação)
+[✨ Acessar Plataforma (Fly.io)](https://analystica.fly.dev) • [📚 Documentação] • [💬 WhatsApp](https://wa.me/5512996182268)(#documentação)
 
 </div>
 
