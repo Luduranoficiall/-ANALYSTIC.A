@@ -237,7 +237,7 @@ Acesse via navegador: `https://SEU-DOMINIO.com.br`
 - Vá em PREDITIVI.A
 - Digite uma pergunta
 - IA analisa dados e retorna insights
-- IA Local (LLaMA/Mistral) + OpenAI GPT-4.1
+- IA Local (LLaMA/Mistral) + Gemini 1.5 Flash
 
 ### 6. Segurança
 - Criptografia ponta-a-ponta

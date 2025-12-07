@@ -25,7 +25,7 @@ As empresas hoje enfrentam:
 - Escalável, modular, multicliente
 
 ## SLIDE 4 — DIFERENCIAIS
-- IA Local + GPT-4.1
+- IA Local + Gemini 1.5 Flash
 - Criptografia AES-256-GCM
 - WebSockets em tempo real
 - ETL automático

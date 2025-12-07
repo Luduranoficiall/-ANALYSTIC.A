@@ -12,7 +12,7 @@ O BI mais avançado, seguro e inteligente do mercado.
 🔐 Segurança nível bancário
 📊 Dashboards premium
 ⚡ Tempo real
-🤖 IA híbrida (Local + GPT-4.1)
+🤖 IA híbrida (Local + Gemini 1.5 Flash)
 📱 Mobile + PWA
 🧩 Microserviços escaláveis
 
@@ -40,7 +40,7 @@ O BI mais avançado, seguro e inteligente do mercado.
 **ANALYTIC.A PRO ULTRA SECURE**
 Plataforma de Business Intelligence e IA
 Arquitetura corporativa global
-Tecnologias: FastAPI, Kubernetes, Redis, PostgreSQL, Plotly, GPT-4.1, IA Local
+Tecnologias: FastAPI, Kubernetes, Redis, PostgreSQL, Plotly, Gemini 1.5 Flash, IA Local
 
 Pronta para escalar para milhares de empresas.
 
