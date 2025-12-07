@@ -25,7 +25,9 @@
    cd /home/luduranoficiall/Área\ de\ trabalho/TRABALHOS\ DA\ EXTRAORDINARIA.AI/TRABALHOS\ DA\ EXTRAORDINARIA.AI/📊\ ANALYTIC.A
    flyctl deploy --config analytica/fly.toml --dockerfile analytica/Dockerfile --app analystica
    ```
-5. Secrets obrigatórias (exemplo):  
+5. Secrets obrigatórias (exemplo):
+   - Se usar Postgres criado/attach na Fly, ela seta `DATABASE_URL` automaticamente (preferencial).
+   - Se for banco externo, defina:
    `flyctl secrets set DB_HOST=... DB_NAME=... DB_USER=... DB_PASS=... SECRET_KEY=... HMAC_SECRET=... GEMINI_API_KEY=...`
 6. Garantir 24/7:  
    `flyctl scale count 1` (ou 2 para HA) e confirme `auto_stop_machines = false` e `min_machines_running = 1` no `fly.toml`.
