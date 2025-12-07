@@ -87,7 +87,7 @@ ANALYTIC.A PRO ULTRA SECURE
 ├── Auth Service (JWT + RSA 4096)
 ├── ETL Service (Event-driven)
 ├── Chart Service (Plotly)
-├── GPT Service (Local + OpenAI)
+├── GPT Service (Local + Gemini 1.5 Flash)
 ├── Redis (Cache + Streams)
 ├── PostgreSQL (Data)
 ├── WebSockets Broadcast
@@ -95,7 +95,7 @@ ANALYTIC.A PRO ULTRA SECURE
 └── Frontend Ultra Premium
 ```
 
-**Tecnologias:** Python 3.11, FastAPI, PostgreSQL, Redis, Docker, Kubernetes, Plotly, Prometheus, Grafana, WebSockets, OpenAI + IA Local
+**Tecnologias:** Python 3.11, FastAPI, PostgreSQL, Redis, Docker, Kubernetes, Plotly, Prometheus, Grafana, WebSockets, Gemini 1.5 Flash + IA Local
 
 ### 3. Estrutura do Repositório
 ```
@@ -136,7 +136,7 @@ ANALYTIC.A PRO ULTRA SECURE
 ```
 
 ### 4. Instalação e Setup Local
-**Requisitos:** Python 3.11, PostgreSQL 15+, Redis, Docker (opcional), OpenAI Key
+**Requisitos:** Python 3.11, PostgreSQL 15+, Redis, Docker (opcional), Gemini API Key
 
 ```bash
 pip install -r requirements.txt

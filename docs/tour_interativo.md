@@ -7,7 +7,7 @@ Explore os principais recursos da plataforma:
 2. **Upload Inteligente**
    - Envie arquivos Excel/CSV e veja o ETL automático em ação.
 3. **Insights com IA**
-   - Faça perguntas e receba análises da IA Local + OpenAI.
+   - Faça perguntas e receba análises da IA Local + Gemini 1.5 Flash.
 4. **Monitoramento em Tempo Real**
    - Acompanhe atualizações instantâneas via WebSockets.
 5. **Gestão Multi-Tenant**
