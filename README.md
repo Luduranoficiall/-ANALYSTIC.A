@@ -44,7 +44,7 @@
 **A plataforma de Business Intelligence mais avançada do Brasil.**  
 **Transforme seus dados em decisões inteligentes com IA integrada.**
 
-[👤 Criado por](https://www.luduranoficiall.com) • Desenvolvedor: Luduranoficiall
+[👤 Criado por](https://www.luduranoficiall.com) • Desenvolvedor: Luduranoficiall • [Contato WhatsApp](https://wa.me/5512996182268)
 
 
 [✨ Acessar Plataforma (Fly.io)](https://analystica.fly.dev) • [📚 Documentação]
