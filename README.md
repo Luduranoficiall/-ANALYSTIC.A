@@ -161,7 +161,7 @@ TENANT_ID=
 - Senhas: PBKDF2
 - Payloads: HMAC SHA-256
 - Dados sensíveis: AES-256-GCM
-- Token expira em 60 min
+- Token com tempo de expiração configurável (padrão interno)
 - Refresh via endpoint seguro
 - Auditoria assinada via HMAC
 - Rotação automática de chaves AES
