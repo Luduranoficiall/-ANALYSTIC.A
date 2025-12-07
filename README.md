@@ -193,9 +193,9 @@ Payload exemplo:
 }
 ```
 
-### 10. IA (Local + OpenAI)
+### 10. IA (Local + Cloud)
 - IA Local (Ollama): http://localhost:11434/api/generate
-- OpenAI GPT-4.1 (fallback premium)
+- Gemini 1.5 Flash (cloud premium)
 
 ### 11. Testes
 - Unit: pytest
