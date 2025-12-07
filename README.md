@@ -8,14 +8,42 @@
 
 ### 🌐 **ACESSE A PLATAFORMA**
 
-# 🔗 [**http://localhost:8888**](http://localhost:8888)
+**Produção (Fly.io):** https://analystica.fly.dev
+
+
+## 🚀 Deploy Profissional — Fly.io (produção)
+
+**URL pública para clientes:**  
+`https://analystica.fly.dev/`
+
+### Como publicar (usando o que está em `/analytica`)
+1. Instale o CLI: `curl -L https://fly.io/install.sh | sh` e exporte `PATH="$HOME/.fly/bin:$PATH"`
+2. Login: `flyctl auth login`
+3. Criar/app ou usar existente (nomes em minúsculas): `flyctl apps create analystica`
+4. Deploy (usa `analytica/fly.toml` e `analytica/Dockerfile`):
+   ```bash
+   cd /home/luduranoficiall/Área\ de\ trabalho/TRABALHOS\ DA\ EXTRAORDINARIA.AI/TRABALHOS\ DA\ EXTRAORDINARIA.AI/📊\ ANALYTIC.A
+   flyctl deploy --config analytica/fly.toml --dockerfile analytica/Dockerfile --app analystica
+   ```
+5. Secrets obrigatórias (exemplo):  
+   `flyctl secrets set DB_HOST=... DB_NAME=... DB_USER=... DB_PASS=... SECRET_KEY=... HMAC_SECRET=... GEMINI_API_KEY=...`
+6. Garantir 24/7:  
+   `flyctl scale count 1` (ou 2 para HA) e confirme `auto_stop_machines = false` e `min_machines_running = 1` no `fly.toml`.
+7. Logs/health: `flyctl logs -a analystica` e `flyctl status`.
+
+**Sempre use a URL pública gerada pela Fly.io para o back-end.**
+
+---
+
+# 🔗 [**URL PÚBLICA FLY.IO**](https://analystica.fly.dev)
 
 ---
 
 **A plataforma de Business Intelligence mais avançada do Brasil.**  
 **Transforme seus dados em decisões inteligentes com IA integrada.**
 
-[✨ Acessar Plataforma](http://localhost:8888) • [📚 Documentação](#documentação) • [💬 Suporte](#suporte)
+
+[✨ Acessar Plataforma (Fly.io)](https://analystica.fly.dev) • [📚 Documentação](#documentação)
 
 </div>
 
@@ -220,7 +248,7 @@ Acesse via navegador: `https://SEU-DOMINIO.com.br`
 - Basta acessar no navegador ou instalar como PWA
 
 ### 8. Suporte
-- suporte@analytica.com.br
+- Canal de suporte interno (via time de desenvolvimento)
 
 ---
 
