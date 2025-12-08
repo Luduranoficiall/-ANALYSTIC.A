@@ -1,5 +1,6 @@
 # fly.toml para deploy no Fly.io
-app = "analytica-pro"
+app = "analystica"
+primary_region = "gru"
 
 [build]
   dockerfile = "Dockerfile"
@@ -7,14 +8,31 @@ app = "analytica-pro"
 [env]
   PORT = "8080"
 
-[[services]]
+[experimental]
+  auto_rollback = true
+  auto_start_machines = true
+  auto_stop_machines = false
+
+[http_service]
   internal_port = 8080
-  protocol = "tcp"
+  force_https = true
+  auto_start_machines = true
+  auto_stop_machines = false
+  min_machines_running = 1
+  processes = ["app"]
 
-  [[services.ports]]
-    handlers = ["http"]
-    port = 80
+  [[http_service.checks]]
+    type = "http"
+    method = "get"
+    path = "/health"
+    interval = "15s"
+    timeout = "5s"
+    grace_period = "30s"
 
-  [[services.ports]]
-    handlers = ["tls", "http"]
-    port = 443
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 1024
+
+[processes]
+  app = "uvicorn app:app --host 0.0.0.0 --port 8080"

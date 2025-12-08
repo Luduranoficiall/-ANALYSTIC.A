@@ -2,8 +2,15 @@
 ## file: app.py — ANALYSTIC.A PRO ULTRA SECURE
 ## ============================================
 import os
+import sys
+from pathlib import Path
 import uvicorn
 from dotenv import load_dotenv
+
+# Garantir que os módulos locais sejam importados mesmo fora da raiz do projeto
+BASE_DIR = Path(__file__).resolve().parent
+if str(BASE_DIR) not in sys.path:
+    sys.path.append(str(BASE_DIR))
 
 # Carregar variáveis de ambiente do arquivo .env (SEGURO!)
 load_dotenv()
@@ -13,6 +20,8 @@ from fastapi.responses import HTMLResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
+import time
 from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
@@ -47,6 +56,46 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Middleware simples de latência (logs curtos)
+class TimingMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request: Request, call_next):
+        start = time.time()
+        response = await call_next(request)
+        duration_ms = int((time.time() - start) * 1000)
+        response.headers["X-Response-Time-ms"] = str(duration_ms)
+        return response
+
+app.add_middleware(TimingMiddleware)
+
+# Cache leve para estáticos (via headers)
+@app.middleware("http")
+async def cache_static(request: Request, call_next):
+    response = await call_next(request)
+    if request.url.path.startswith("/static/"):
+        # 1 dia de cache para assets estáticos
+        response.headers["Cache-Control"] = "public, max-age=86400, immutable"
+    return response
+
+
+# ======================================================
+# ASSINATURA (CTA)
+# ======================================================
+@app.get("/subscribe", response_class=HTMLResponse)
+def subscribe_page(request: Request):
+    return templates.TemplateResponse("subscribe.html", {"request": request})
+
+
+@app.post("/webhook/payment")
+async def payment_webhook(request: Request):
+    """
+    Webhook placeholder para confirmação de pagamento.
+    Integração real depende do provedor escolhido.
+    """
+    data = await request.json()
+    # TODO: validar assinatura do provedor e ativar acesso do cliente
+    print("Webhook pagamento recebido:", data)
+    return {"status": "ok"}
 
 
 # ======================================================
@@ -85,6 +134,15 @@ def metrics():
     if PROMETHEUS_ENABLED:
         return Response(generate_latest(), media_type="text/plain")
     return {"status": "prometheus not installed"}
+
+
+# ======================================================
+# HEALTHCHECK (FLY.IO)
+# ======================================================
+@app.get("/health")
+def health():
+    """Retorna ok para checagens de saúde da infraestrutura"""
+    return {"status": "ok"}
 
 
 # ======================================================

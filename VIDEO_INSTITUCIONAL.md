@@ -22,7 +22,7 @@ Dashboard premium aparece com efeito digital.
 "Por isso criamos o ANALYTIC.A PRO ULTRA SECURE: o BI mais avançado, seguro e inteligente do mercado."
 
 ## 🎞️ CENA 4 — Recursos (0:25 — 0:45)
-Cortes rápidos: IA Local + OpenAI, Gráficos 3D, WebSockets, ETL automático, Kubernetes, Segurança AES-256.
+Cortes rápidos: IA Local + Gemini 1.5 Flash, Gráficos 3D, WebSockets, ETL automático, Kubernetes, Segurança AES-256.
 **NARRADOR:**
 "Com IA híbrida, dashboards profissionais, tempo real e criptografia nível bancário, sua empresa finalmente tem controle total dos dados."
 

@@ -3,7 +3,8 @@ uvicorn
 jinja2
 python-multipart
 sqlalchemy
-psycopg2
+# Use binary wheel to avoid building with pg_config during container build
+psycopg2-binary
 cryptography
 python-jose
 openai
