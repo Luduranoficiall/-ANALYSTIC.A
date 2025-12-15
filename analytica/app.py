@@ -1,11 +1,10 @@
 ## ============================================
 ## file: app.py — ANALYSTIC.A PRO ULTRA SECURE
 ## ============================================
-import os
 import sys
 from pathlib import Path
-import uvicorn
 from dotenv import load_dotenv
+
 
 # Garantir que os módulos locais sejam importados mesmo fora da raiz do projeto
 BASE_DIR = Path(__file__).resolve().parent
@@ -26,7 +25,7 @@ from fastapi.exceptions import RequestValidationError
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 # Imports locais (relativos ao pacote analytica)
-from security.auth import get_current_user_or_redirect, login_user, register_user
+from security.auth import get_current_user_or_redirect, login_user
 from etl.etl_engine import process_excel
 from charts.chart_engine import generate_chart
 from gpt.gpt_engine import generate_insights
@@ -160,28 +159,19 @@ def landing_page(request: Request):
             if user:
                 return RedirectResponse("/dashboard", status_code=302)
         except Exception:
-            pass
-    return templates.TemplateResponse("landing.html", {"request": request})
-
-
-# ======================================================
-# 📝 REGISTRO/CADASTRO
-# ======================================================
-@app.get("/register", response_class=HTMLResponse)
-def register_page(request: Request):
-    return templates.TemplateResponse("register.html", {"request": request, "error": None})
-
-
-@app.post("/register")
-def register_user_route(request: Request, name: str = Form(...), email: str = Form(...), password: str = Form(...)):
-    # Usar o sistema de registro real
-    result = register_user(email, password, name)
-    
-    if not result["success"]:
-        return templates.TemplateResponse("register.html", {
-            "request": request,
-            "error": result["error"]
-        })
+            from fastapi import FastAPI, Request, Depends, UploadFile, File, Form
+            from fastapi.responses import HTMLResponse, RedirectResponse, Response
+            from fastapi.staticfiles import StaticFiles
+            from fastapi.templating import Jinja2Templates
+            from fastapi.middleware.cors import CORSMiddleware
+            from starlette.middleware.base import BaseHTTPMiddleware
+            from fastapi.exceptions import RequestValidationError
+            from starlette.exceptions import HTTPException as StarletteHTTPException
+            from security.auth import get_current_user_or_redirect, login_user, register_user
+            from etl.etl_engine import process_excel
+            from charts.chart_engine import generate_chart
+            from gpt.gpt_engine import generate_insights
+            import time
     
     # Sucesso! Redirecionar para login
     return RedirectResponse("/login?registered=true", status_code=302)
@@ -810,4 +800,5 @@ async def update_profile(request: Request, user=Depends(get_current_user_or_redi
 # RUN
 # ======================================================
 if __name__ == "__main__":
+    import uvicorn
     uvicorn.run("app:app", host="0.0.0.0", port=8080, reload=True)
