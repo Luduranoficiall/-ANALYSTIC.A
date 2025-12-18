@@ -16,11 +16,12 @@
 **URL pública para clientes:**  
 `https://analystica.fly.dev/`
 
+
 ### Como publicar (usando o que está em `/analytica`)
 1. Instale o CLI: `curl -L https://fly.io/install.sh | sh` e exporte `PATH="$HOME/.fly/bin:$PATH"`
 2. Login: `flyctl auth login`
 3. Criar/app ou usar existente (nomes em minúsculas): `flyctl apps create analystica`
-4. Deploy (usa `analytica/fly.toml` e `analytica/Dockerfile`):
+4. Deploy (usa **apenas** os arquivos oficiais em `analytica/`):
    ```bash
    cd /home/luduranoficiall/Área\ de\ trabalho/TRABALHOS\ DA\ EXTRAORDINARIA.AI/TRABALHOS\ DA\ EXTRAORDINARIA.AI/📊\ ANALYTIC.A
    flyctl deploy --config analytica/fly.toml --dockerfile analytica/Dockerfile --app analystica
@@ -30,10 +31,12 @@
    - Se for banco externo, defina:
    `flyctl secrets set DB_HOST=... DB_NAME=... DB_USER=... DB_PASS=... SECRET_KEY=... HMAC_SECRET=... GEMINI_API_KEY=...`
 6. Garantir 24/7:  
-   `flyctl scale count 1` (ou 2 para HA) e confirme `auto_stop_machines = false` e `min_machines_running = 1` no `fly.toml`.
+   `flyctl scale count 1` (ou 2 para HA) e confirme `auto_stop_machines = false` e `min_machines_running = 1` no `analytica/fly.toml`.
 7. Logs/health: `flyctl logs -a analystica` e `flyctl status`.
 
 **Sempre use a URL pública gerada pela Fly.io para o back-end.**
+
+> **Atenção:** Todos os arquivos de configuração oficiais (Dockerfile, fly.toml, requirements.txt, .env.example) estão em `/analytica/`. Não utilize arquivos da raiz para deploy ou setup. Isso garante máxima segurança, organização e padrão premium.
 
 ---
 
